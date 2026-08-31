@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Math Module 1 — Mixed-Domain Starter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap">
+<style>
+  :root{
+    --ground:#F4F5F8; --surface:#FFFFFF; --sunk:#E9ECF2;
+    --ink:#16202E; --ink-soft:#5C6A7D; --ink-faint:#8E99A8;
+    --accent:#33456B; --accent-soft:#E2E7F1;
+    --keep:#3B7A57; --keep-soft:#E6F0EA;
+    --kill:#B0413E; --kill-soft:#F7E9E8;
+    --warn:#9A6B1F; --warn-soft:#F5EAD6;
+    --rule:#D8DDE6;
+    --f-display:"Instrument Serif",Georgia,serif;
+    --f-body:"Literata",Georgia,"Times New Roman",serif;
+    --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#14181F; --surface:#1C222C; --sunk:#242C38;
+      --ink:#E6EAF0; --ink-soft:#9AA6B6; --ink-faint:#6B7788;
+      --accent:#8FA6D4; --accent-soft:#232D42;
+      --keep:#7FC49C; --keep-soft:#1B2A22;
+      --kill:#E08A85; --kill-soft:#2E2020;
+      --warn:#D8B056; --warn-soft:#2C2517;
+      --rule:#2C3542;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#14181F; --surface:#1C222C; --sunk:#242C38;
+    --ink:#E6EAF0; --ink-soft:#9AA6B6; --ink-faint:#6B7788;
+    --accent:#8FA6D4; --accent-soft:#232D42;
+    --keep:#7FC49C; --keep-soft:#1B2A22;
+    --kill:#E08A85; --kill-soft:#2E2020;
+    --warn:#D8B056; --warn-soft:#2C2517;
+    --rule:#2C3542;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--f-body);font-size:1.02rem;line-height:1.7;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:820px;margin:0 auto;padding:0 clamp(1rem,5vw,2rem)}
+  h1,h2,h3{margin:0;line-height:1.15;text-wrap:balance}
+  h1{font-family:var(--f-display);font-size:clamp(2.4rem,6vw,3.5rem);font-weight:400;letter-spacing:-0.01em}
+  h2{font-family:var(--f-display);font-size:clamp(1.5rem,4vw,2rem);font-weight:400;margin-top:2.4rem}
+  .eyebrow{font-family:var(--f-mono);font-size:0.7rem;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent)}
+  .hero{padding:clamp(2.4rem,7vw,3.6rem) 0 clamp(1.3rem,4vw,1.8rem);border-bottom:1px solid var(--rule)}
+  .hero .lede{font-size:1.08rem;color:var(--ink-soft);max-width:64ch;margin-top:0.9rem}
+  table.meta{border-collapse:collapse;margin:1.5rem 0 0;font-size:0.88rem;width:100%}
+  table.meta td{border:1px solid var(--rule);padding:0.42rem 0.7rem;vertical-align:top}
+  table.meta td:first-child{font-family:var(--f-mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);white-space:nowrap;width:1%;background:var(--sunk)}
+  table.meta code{font-family:var(--f-mono);font-size:0.8rem}
+  .instr{background:var(--sunk);border-left:3px solid var(--accent);padding:0.85rem 1.05rem;border-radius:0 3px 3px 0;margin:1.4rem 0}
+  .instr p{margin:0.25rem 0;font-size:0.92rem}
+
+  .toolbar{position:sticky;top:0;z-index:40;display:flex;flex-wrap:wrap;align-items:center;gap:0.6rem 1rem;
+    background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:0.6rem 0.85rem;margin:1.6rem 0 1.2rem;
+    box-shadow:0 2px 10px rgba(20,24,31,0.06)}
+  .tb-timer{display:flex;align-items:center;gap:0.55rem;font-family:var(--f-mono)}
+  #tbClock{font-size:1.15rem;font-weight:700;letter-spacing:0.02em;font-variant-numeric:tabular-nums;color:var(--ink)}
+  #tbClock.warn{color:var(--warn)} #tbClock.danger{color:var(--kill)}
+  .tb-status{font-family:var(--f-mono);font-size:0.74rem;color:var(--ink-soft);margin-right:auto;line-height:1.4}
+  .tb-status b{color:var(--ink)}
+  .tb-btn{font-family:var(--f-mono);font-size:0.76rem;font-weight:500;padding:0.42rem 0.8rem;border-radius:5px;
+    border:1px solid var(--rule);background:var(--surface);color:var(--ink);cursor:pointer;transition:background .14s ease,border-color .14s ease}
+  .tb-btn:hover{background:var(--sunk);border-color:var(--ink-faint)}
+  .tb-btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+  .tb-btn.primary:hover{filter:brightness(1.1)}
+  .tb-btn.ghost{border-style:dashed;color:var(--ink-soft)}
+  .tb-btn:disabled{opacity:0.5;cursor:default}
+  .tb-actions{display:flex;gap:0.5rem}
+
+  .qcard{border-top:1px solid var(--rule);padding:1.4rem 0;scroll-margin-top:5rem}
+  .qcard:first-of-type{border-top:none}
+  .qhead{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.5rem}
+  .qn{font-family:var(--f-mono);font-weight:700;color:var(--accent);font-size:0.85rem}
+  .flagbtn{margin-left:auto;font-family:var(--f-mono);font-size:0.68rem;letter-spacing:0.04em;text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:0.35rem;padding:0.25rem 0.55rem;border-radius:999px;
+    border:1px solid var(--rule);background:var(--surface);color:var(--ink-soft);cursor:pointer}
+  .flagbtn:hover{border-color:var(--warn);color:var(--warn)}
+  .flagbtn.on{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+  .stim{margin:0.5rem 0}
+  .stim.box{background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:0.85rem 1.1rem}
+  .stem{font-weight:600;margin:0.7rem 0 0.5rem}
+  .math{font-family:var(--f-mono);font-size:0.95em}
+  sup{font-size:0.72em}
+  .data-wrap{overflow-x:auto}
+
+  .opts{display:flex;flex-direction:column;gap:0.35rem;margin-top:0.3rem}
+  .optrow{display:grid;grid-template-columns:1fr auto;gap:0.5rem;align-items:stretch}
+  .optbtn{text-align:left;display:grid;grid-template-columns:1.7rem 1fr;gap:0.5rem;align-items:start;
+    padding:0.5rem 0.7rem;border-radius:5px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);
+    font-family:var(--f-body);font-size:1rem;line-height:1.55;cursor:pointer;transition:border-color .14s ease,background .14s ease}
+  .optbtn:hover{background:var(--sunk)}
+  .optbtn .ol{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+  .optbtn.sel{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+  .xbtn{font-family:var(--f-mono);font-size:0.85rem;width:2.1rem;border-radius:5px;border:1px solid var(--rule);
+    background:var(--surface);color:var(--ink-faint);cursor:pointer;transition:color .14s ease,border-color .14s ease}
+  .xbtn:hover{color:var(--kill);border-color:var(--kill)}
+  .optrow.elim .optbtn{opacity:0.4}
+  .optrow.elim .optbtn .otx{text-decoration:line-through}
+  .optrow.elim .xbtn{color:var(--kill);border-color:var(--kill);background:var(--kill-soft)}
+
+  .gridin{display:flex;flex-wrap:wrap;align-items:center;gap:0.7rem;margin-top:0.4rem}
+  .giinput{font-family:var(--f-mono);font-size:1rem;padding:0.5rem 0.7rem;border-radius:5px;border:1px solid var(--rule);
+    background:var(--surface);color:var(--ink);width:11rem}
+  .giinput:focus{border-color:var(--accent)}
+  .gihint{font-family:var(--f-mono);font-size:0.7rem;color:var(--ink-faint)}
+
+  .review{margin-top:0.9rem;border-left:3px solid var(--ink-faint);background:var(--sunk);border-radius:0 4px 4px 0;padding:0.8rem 1rem}
+  .review.correct{border-left-color:var(--keep)}
+  .review.wrong{border-left-color:var(--kill)}
+  .review .verdict{font-family:var(--f-mono);font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.35rem}
+  .review.correct .verdict{color:var(--keep)}
+  .review.wrong .verdict{color:var(--kill)}
+  .review .line{font-family:var(--f-mono);font-size:0.8rem;margin:0.15rem 0;color:var(--ink-soft)}
+  .review .line b{color:var(--ink)}
+  .review .exp{margin:0.5rem 0 0;font-size:0.94rem}
+  .review .tags{font-family:var(--f-mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-faint);margin-top:0.5rem}
+  .optbtn.key{border-color:var(--keep);background:var(--keep-soft)}
+  .optbtn.pickedwrong{border-color:var(--kill);background:var(--kill-soft)}
+
+  .results{border:1px solid var(--accent);background:var(--accent-soft);border-radius:8px;padding:1.2rem 1.3rem;margin:1.4rem 0}
+  .results h2{margin:0 0 0.4rem;font-size:1.6rem}
+  .results .big{font-family:var(--f-mono);font-size:2.2rem;font-weight:700;color:var(--accent);line-height:1}
+  .results .sub{font-family:var(--f-mono);font-size:0.8rem;color:var(--ink-soft);margin-top:0.3rem}
+  .dgroups{display:flex;flex-direction:column;gap:0.5rem;margin-top:0.9rem}
+  .dgrow{display:grid;grid-template-columns:14rem 1fr auto;gap:0.7rem;align-items:center;font-family:var(--f-mono);font-size:0.76rem}
+  .dgbar{height:8px;background:var(--sunk);border-radius:4px;overflow:hidden}
+  .dgbar > div{height:100%;background:var(--accent)}
+  @media (max-width:560px){ .dgrow{grid-template-columns:1fr auto} .dgbar{grid-column:1 / -1} }
+
+  .revpanel{position:fixed;inset:0;z-index:60;background:rgba(20,24,31,0.45);display:none;align-items:flex-start;justify-content:center;padding:2rem 1rem}
+  .revpanel.open{display:flex}
+  .revcard{background:var(--surface);border:1px solid var(--rule);border-radius:10px;max-width:520px;width:100%;padding:1.2rem 1.3rem;max-height:80vh;overflow:auto}
+  .revcard h3{font-family:var(--f-display);font-size:1.4rem;margin-bottom:0.2rem}
+  .revcard .rp-sub{font-family:var(--f-mono);font-size:0.74rem;color:var(--ink-soft);margin-bottom:0.9rem}
+  .chipgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(3rem,1fr));gap:0.5rem}
+  .chip{font-family:var(--f-mono);font-size:0.78rem;padding:0.45rem 0;border-radius:5px;border:1px solid var(--rule);
+    background:var(--surface);color:var(--ink-soft);cursor:pointer;text-align:center;position:relative}
+  .chip.answered{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+  .chip.flagged::after{content:"";position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--warn)}
+  .chip.ok{background:var(--keep);border-color:var(--keep);color:#fff}
+  .chip.no{background:var(--kill);border-color:var(--kill);color:#fff}
+  .rp-legend{font-family:var(--f-mono);font-size:0.68rem;color:var(--ink-faint);margin-top:0.9rem;line-height:1.6}
+  .rp-close{margin-top:1rem}
+
+  .toast{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%);z-index:70;background:var(--ink);color:var(--ground);
+    font-family:var(--f-mono);font-size:0.78rem;padding:0.6rem 1rem;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .2s ease}
+  .toast.show{opacity:1}
+  .confirmbar{display:flex;flex-wrap:wrap;align-items:center;gap:0.6rem;background:var(--warn-soft);border:1px solid var(--warn);
+    border-radius:8px;padding:0.65rem 0.9rem;margin:0 0 1.2rem;font-family:var(--f-mono);font-size:0.8rem;color:var(--ink)}
+  .confirmbar .msg{margin-right:auto}
+
+  footer{font-family:var(--f-mono);font-size:0.72rem;color:var(--ink-faint);text-align:center;padding:2.4rem 1rem 3rem;border-top:1px solid var(--rule);margin-top:2.4rem}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+  @media print{
+    .toolbar,.revpanel,.toast,.flagbtn,.xbtn,#tbReset{display:none!important}
+    body{background:#fff;color:#000;font-size:10.5pt}
+    .hero{padding:0.5rem 0 1rem} h1{font-size:20pt}
+    .qcard{break-inside:avoid} .instr{background:none}
+    .optbtn{border:1px solid #999}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Digital SAT · Math</span>
+    <h1>Module 1 — Mixed-Domain Starter</h1>
+    <p class="lede">Fourteen questions across all four Math domains at first-module difficulty. Twelve are multiple choice; two are student-produced response (grid-in). Answer on screen, run the timer, and submit for a score and worked solutions.</p>
+    <table class="meta">
+      <tr><td>Exam</td><td>Digital SAT</td></tr>
+      <tr><td>Section</td><td>Math — Algebra · Advanced Math · Problem-Solving and Data Analysis · Geometry and Trigonometry</td></tr>
+      <tr><td>Target level</td><td>550–650 section score</td></tr>
+      <tr><td>Timing</td><td>22 minutes (test pace is ~1 min 35 s per question)</td></tr>
+      <tr><td>Question count</td><td>14 (12 multiple choice, 2 grid-in)</td></tr>
+      <tr><td>Full write-up</td><td><code>2026-08-28_math-module1_practice_550-650-KEY.html</code> (same folder — teacher copy)</td></tr>
+      <tr><td>Created</td><td>2026-08-28</td></tr>
+    </table>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <div class="instr">
+    <p><strong>Answer every question.</strong> There is no penalty for a wrong answer.</p>
+    <p><strong>A calculator is allowed on every question</strong> (the real test has the Desmos calculator built in).</p>
+    <p><strong>Grid-in:</strong> type one number. Negative answers and fractions like <span class="math">3/2</span> are accepted; mixed numbers are not.</p>
+    <p><strong>Timer:</strong> <em>Start</em> runs the 22-minute clock; it warns at 5 minutes and 1 minute and stops at zero — in practice you may keep working. <strong>Nothing is scored until you press Submit.</strong> Progress is saved in this browser.</p>
+  </div>
+
+  <div id="app"></div>
+
+</main>
+
+<div class="revpanel" id="revPanel">
+  <div class="revcard">
+    <h3>Question map</h3>
+    <p class="rp-sub" id="rpSub"></p>
+    <div class="chipgrid" id="chipGrid"></div>
+    <p class="rp-legend" id="rpLegend"></p>
+    <button class="tb-btn rp-close" id="rpClose">Close</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<footer>LBEnglishCo · Digital SAT · Math · Interactive Module 1 starter · 2026-08-28</footer>
+
+<script>
+window.SAT_CONFIG = {
+  id: "math-m1-2026-08-28",
+  seconds: 22 * 60,
+  warnAt: 300,
+  dangerAt: 60,
+  qprefix: "",
+  dgroups: ["Algebra","Advanced Math","Problem-Solving and Data Analysis","Geometry and Trigonometry"],
+  questions: [
+    {
+      id:"1", type:"mc", dgroup:"Algebra", tags:"Algebra · Linear equations in one variable · Easy",
+      stim:"If <span class='math'>3x + 7 = 25</span>, what is the value of <span class='math'>x</span>?",
+      options:["6","9","32/3","4"], answer:0,
+      exp:"<span class='math'>3x + 7 = 25</span> &rarr; <span class='math'>3x = 18</span> &rarr; <span class='math'>x = 6</span>. <b>B</b> divides 27 by 3 (forgot to subtract 7 first). <b>C</b> adds 7 instead of subtracting. <b>D</b> slips to <span class='math'>12 &divide; 3</span>."
+    },
+    {
+      id:"2", type:"mc", dgroup:"Algebra", tags:"Algebra · Linear functions · Easy",
+      stim:"A car rental costs a flat fee of $40 plus $0.15 for each mile driven. Which equation gives the total cost <span class='math'>c</span>, in dollars, for a rental of <span class='math'>m</span> miles?",
+      options:["<span class='math'>c = 0.15m &minus; 40</span>","<span class='math'>c = 40m + 0.15</span>","<span class='math'>c = 55m</span>","<span class='math'>c = 40 + 0.15m</span>"], answer:3,
+      exp:"The $40 is fixed; the $0.15 is charged per mile, so it multiplies <span class='math'>m</span>: <span class='math'>c = 40 + 0.15m</span>. <b>A</b> subtracts the fixed fee. <b>B</b> swaps the rate and the flat fee. <b>C</b> treats <span class='math'>40 + 0.15</span> as one combined per-mile rate."
+    },
+    {
+      id:"3", type:"mc", dgroup:"Algebra", tags:"Algebra · Systems of linear equations · Medium",
+      stim:"The system of equations <span class='math'>2x + y = 11</span> and <span class='math'>x &minus; y = 1</span> has solution <span class='math'>(x, y)</span>. What is the value of <span class='math'>x</span>?",
+      options:["3","4","7","10"], answer:1,
+      exp:"Add the equations: <span class='math'>3x = 12</span> &rarr; <span class='math'>x = 4</span> (and <span class='math'>y = 3</span>). <b>A</b> is the value of <span class='math'>y</span>. <b>C</b> is <span class='math'>x + y</span>. <b>D</b> comes from subtracting the equations instead of adding."
+    },
+    {
+      id:"4", type:"mc", dgroup:"Algebra", tags:"Algebra · Linear inequalities · Medium",
+      stim:"Which value of <span class='math'>x</span> is <em>not</em> a solution to the inequality <span class='math'>5 &minus; 2x &le; 11</span>?",
+      options:["&minus;4","&minus;3","0","5"], answer:0,
+      exp:"<span class='math'>5 &minus; 2x &le; 11</span> &rarr; <span class='math'>&minus;2x &le; 6</span> &rarr; <span class='math'>x &ge; &minus;3</span> (dividing by a negative flips the sign). Any <span class='math'>x &lt; &minus;3</span> fails, so <span class='math'>&minus;4</span> is the answer. <b>B</b> is the boundary and satisfies it (<span class='math'>11 &le; 11</span>). <b>C</b> and <b>D</b> clearly satisfy it."
+    },
+    {
+      id:"5", type:"grid", dgroup:"Algebra", tags:"Algebra · Linear equations in two variables · Medium",
+      stim:"In the <span class='math'>xy</span>-plane, line <span class='math'>&#8467;</span> passes through the points <span class='math'>(2, 3)</span> and <span class='math'>(6, 11)</span>. What is the <span class='math'>y</span>-coordinate of the point where line <span class='math'>&#8467;</span> crosses the <span class='math'>y</span>-axis?",
+      accept:["-1"],
+      exp:"Slope <span class='math'>= (11 &minus; 3) / (6 &minus; 2) = 2</span>. Using <span class='math'>y = 2x + b</span> with <span class='math'>(2, 3)</span>: <span class='math'>3 = 4 + b</span>, so <span class='math'>b = &minus;1</span>. Common wrong entries: <span class='math'>7</span> (used the wrong point), <span class='math'>2</span> (gave the slope)."
+    },
+    {
+      id:"6", type:"mc", dgroup:"Advanced Math", tags:"Advanced Math · Function notation · Easy",
+      stim:"The function <span class='math'>f</span> is defined by <span class='math'>f(x) = x<sup>2</sup> &minus; 4x + 1</span>. What is the value of <span class='math'>f(3)</span>?",
+      options:["&minus;2","2","&minus;20","22"], answer:0,
+      exp:"<span class='math'>f(3) = 9 &minus; 12 + 1 = &minus;2</span>. <b>B</b> drops the negative sign on the total. <b>C</b> mis-orders operations. <b>D</b> reads <span class='math'>x<sup>2</sup></span> as <span class='math'>2x</span> and loses signs."
+    },
+    {
+      id:"7", type:"mc", dgroup:"Advanced Math", tags:"Advanced Math · Quadratic functions · Medium",
+      stim:"The function <span class='math'>g</span> is defined by <span class='math'>g(x) = (x &minus; 5)(x + 2)</span>. For what value of <span class='math'>x</span> does <span class='math'>g</span> reach its minimum value?",
+      options:["&minus;2","1.5","3","5"], answer:1,
+      exp:"The zeros are <span class='math'>x = 5</span> and <span class='math'>x = &minus;2</span>; the vertex sits halfway between them at <span class='math'>x = 1.5</span>, and the parabola opens up, so that is the minimum. <b>A</b> and <b>D</b> are the zeros (where <span class='math'>g = 0</span>). <b>C</b> averages 5 and 2, ignoring the sign."
+    },
+    {
+      id:"8", type:"mc", dgroup:"Advanced Math", tags:"Advanced Math · Exponential functions · Medium",
+      stim:"A culture of bacteria starts with 500 cells and doubles every 3 hours. Which expression gives the number of cells after <span class='math'>t</span> hours?",
+      options:["<span class='math'>500 &middot; 2<sup>3t</sup></span>","<span class='math'>500 &middot; 3<sup>t/2</sup></span>","<span class='math'>500 &middot; 2<sup>t/3</sup></span>","<span class='math'>500 + (2t / 3)</span>"], answer:2,
+      exp:"Growth factor 2 (doubling); the exponent is elapsed time over time per doubling, <span class='math'>t/3</span>. Check <span class='math'>t = 3</span>: <span class='math'>500 &middot; 2 = 1000</span>. <b>A</b> doubles every 20 minutes. <b>B</b> triples the population. <b>D</b> is linear growth."
+    },
+    {
+      id:"9", type:"grid", dgroup:"Advanced Math", tags:"Advanced Math · Quadratic equations · Hard",
+      stim:"In the equation <span class='math'>x<sup>2</sup> + bx + 12 = 0</span>, where <span class='math'>b</span> is a constant, one of the two solutions is <span class='math'>x = 2</span>. What is the value of <span class='math'>b</span>?",
+      accept:["-8"],
+      exp:"Substitute <span class='math'>x = 2</span>: <span class='math'>4 + 2b + 12 = 0</span> &rarr; <span class='math'>2b = &minus;16</span> &rarr; <span class='math'>b = &minus;8</span>. (The other root is 6; sum of roots <span class='math'>= 8 = &minus;b</span>, consistent.) Common wrong entries: <span class='math'>8</span> (wrong sign on the sum-of-roots rule), <span class='math'>6</span> (found the other root instead of <span class='math'>b</span>)."
+    },
+    {
+      id:"10", type:"mc", dgroup:"Problem-Solving and Data Analysis", tags:"Problem-Solving and Data Analysis · Percentages · Easy",
+      stim:"A jacket originally priced at $80 is marked down by 25%. What is the sale price?",
+      options:["$55","$60","$65","$20"], answer:1,
+      exp:"A 25% markdown leaves 75%: <span class='math'>0.75 &times; 80 = 60</span>. <b>A</b> subtracts a flat $25. <b>C</b> takes a quarter off the wrong base. <b>D</b> gives the discount amount, not the price."
+    },
+    {
+      id:"11", type:"mc", dgroup:"Problem-Solving and Data Analysis", tags:"Problem-Solving and Data Analysis · Ratios and proportions · Medium",
+      stim:"A bread recipe uses 3 cups of flour for every 2 cups of sugar. If a baker uses 12 cups of flour, how many cups of sugar are needed to keep the same ratio?",
+      options:["6","10","18","8"], answer:3,
+      exp:"Flour is scaled by <span class='math'>12 &divide; 3 = 4</span>, so sugar <span class='math'>= 2 &times; 4 = 8</span>. <b>A</b> halves the flour figure. <b>B</b> adds the difference (<span class='math'>12 &minus; 2</span>) instead of scaling. <b>C</b> inverts the ratio."
+    },
+    {
+      id:"12", type:"mc", dgroup:"Problem-Solving and Data Analysis", tags:"Problem-Solving and Data Analysis · Mean · Medium",
+      stim:"The mean of five numbers is 14. Four of the numbers are 10, 12, 15, and 18. What is the fifth number?",
+      options:["13","14","15","16"], answer:2,
+      exp:"Five numbers averaging 14 total <span class='math'>70</span>. The four known values sum to <span class='math'>55</span>, so the fifth is <span class='math'>70 &minus; 55 = 15</span>. <b>A</b> averages the four known numbers. <b>B</b> assumes the missing value equals the mean. <b>D</b> is an arithmetic slip in the sum."
+    },
+    {
+      id:"13", type:"mc", dgroup:"Geometry and Trigonometry", tags:"Geometry and Trigonometry · Angles in triangles · Medium",
+      stim:"In triangle <span class='math'>ABC</span>, the measure of angle <span class='math'>A</span> is 40&deg; and the measure of angle <span class='math'>B</span> is 75&deg;. What is the measure of the exterior angle of the triangle at vertex <span class='math'>C</span>?",
+      options:["65&deg;","105&deg;","115&deg;","140&deg;"], answer:2,
+      exp:"An exterior angle equals the sum of the two remote interior angles: <span class='math'>40&deg; + 75&deg; = 115&deg;</span>. (Interior angle <span class='math'>C = 65&deg;</span>; <span class='math'>65 + 115 = 180</span>.) <b>A</b> is the interior angle at <span class='math'>C</span>. <b>B</b> uses only one angle. <b>D</b> doubles 70 or adds 65 + 75."
+    },
+    {
+      id:"14", type:"mc", dgroup:"Geometry and Trigonometry", tags:"Geometry and Trigonometry · Right triangles · Medium",
+      stim:"A right triangle has legs of length 6 and 8. What is the perimeter of the triangle?",
+      options:["14","20","28","24"], answer:3,
+      exp:"Hypotenuse <span class='math'>= &radic;(36 + 64) = 10</span> (a 6-8-10 triangle). Perimeter <span class='math'>= 6 + 8 + 10 = 24</span>. <b>A</b> adds only the two legs. <b>B</b> uses a hypotenuse of 6. <b>C</b> uses a hypotenuse of 14."
+    }
+  ]
+};
+</script>
+<script>
+(function(){
+  var C = window.SAT_CONFIG;
+  var LS = "satp_" + C.id;
+  var S = { answers:{}, elim:{}, flags:{}, elapsed:0, submitted:false, score:null };
+  try { var j = JSON.parse(localStorage.getItem(LS)); if (j && typeof j === "object") S = Object.assign(S, j); } catch(e){}
+  var running = false, tick = null;
+
+  function save(){ try { localStorage.setItem(LS, JSON.stringify(S)); } catch(e){} }
+  function el(t,c,h){ var n=document.createElement(t); if(c)n.className=c; if(h!=null)n.innerHTML=h; return n; }
+  function fmt(s){ s=Math.max(0,s); var m=Math.floor(s/60), r=s%60; return (m<10?"0":"")+m+":"+(r<10?"0":"")+r; }
+
+  var app = document.getElementById("app");
+
+  var bar = el("div","toolbar");
+  bar.innerHTML =
+    '<div class="tb-timer"><button id="tbToggle" class="tb-btn">Start</button><span id="tbClock">'+fmt(C.seconds)+'</span></div>'+
+    '<div class="tb-status" id="tbStatus"></div>'+
+    '<div class="tb-actions"><button id="tbReview" class="tb-btn">Review</button><button id="tbSubmit" class="tb-btn primary">Submit</button></div>';
+  app.appendChild(bar);
+
+  var confirmBar = el("div","confirmbar"); confirmBar.style.display="none"; app.appendChild(confirmBar);
+  var results = el("div","results"); results.style.display="none"; app.appendChild(results);
+  var list = el("div","qlist"); app.appendChild(list);
+
+  function askConfirm(message, okLabel, onOk){
+    confirmBar.innerHTML = '<span class="msg"></span>';
+    confirmBar.querySelector(".msg").textContent = message;
+    var ok = el("button","tb-btn primary", okLabel);
+    var no = el("button","tb-btn", "Keep working");
+    ok.addEventListener("click", function(){ confirmBar.style.display = "none"; onOk(); });
+    no.addEventListener("click", function(){ confirmBar.style.display = "none"; });
+    confirmBar.appendChild(ok); confirmBar.appendChild(no);
+    confirmBar.style.display = "flex";
+    confirmBar.scrollIntoView({ block:"nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+  var resetWrap = el("div",null,'<button id="tbReset" class="tb-btn ghost" style="margin-top:1.5rem">Reset attempt</button>');
+  app.appendChild(resetWrap);
+
+  C.questions.forEach(function(q){
+    var card = el("div","qcard"); card.id = "q_"+q.id;
+    var head = el("div","qhead");
+    head.appendChild(el("span","qn", "Question "+(C.qprefix||"")+q.id + (q.type === "grid" ? " · grid-in" : "")));
+    var flag = el("button","flagbtn"+(S.flags[q.id]?" on":""), '<span aria-hidden="true">&#9873;</span><span>Flag</span>');
+    flag.setAttribute("aria-pressed", S.flags[q.id]?"true":"false");
+    flag.addEventListener("click", function(){
+      S.flags[q.id] = !S.flags[q.id];
+      flag.classList.toggle("on", !!S.flags[q.id]);
+      flag.setAttribute("aria-pressed", S.flags[q.id]?"true":"false");
+      save(); updateStatus();
+    });
+    head.appendChild(flag);
+    card.appendChild(head);
+
+    if (q.stim) card.appendChild(el("div","stim", q.stim));
+    if (q.stem) card.appendChild(el("p","stem", q.stem));
+
+    if (q.type === "mc"){
+      var og = el("div","opts"); og.setAttribute("role","radiogroup");
+      q.options.forEach(function(opt, oi){
+        var letter = "ABCD"[oi];
+        var row = el("div","optrow");
+        var btn = el("button","optbtn", '<span class="ol">'+letter+')</span><span class="otx">'+opt+'</span>');
+        btn.type="button"; btn.setAttribute("role","radio");
+        btn.setAttribute("aria-label", "Choice "+letter+": "+opt.replace(/<[^>]+>/g,""));
+        if ((S.elim[q.id]||[]).indexOf(oi) > -1) row.classList.add("elim");
+        if (S.answers[q.id] === oi){ btn.classList.add("sel"); btn.setAttribute("aria-checked","true"); } else btn.setAttribute("aria-checked","false");
+        btn.addEventListener("click", function(){
+          if (S.submitted) return;
+          if ((S.elim[q.id]||[]).indexOf(oi) > -1) return;
+          S.answers[q.id] = oi;
+          og.querySelectorAll(".optbtn").forEach(function(b){ b.classList.remove("sel"); b.setAttribute("aria-checked","false"); });
+          btn.classList.add("sel"); btn.setAttribute("aria-checked","true");
+          save(); updateStatus();
+        });
+        var x = el("button","xbtn","&#10005;"); x.type="button";
+        x.title = "Cross out choice "+letter; x.setAttribute("aria-label","Cross out choice "+letter);
+        x.addEventListener("click", function(){
+          if (S.submitted) return;
+          var arr = (S.elim[q.id]||[]).slice();
+          var idx = arr.indexOf(oi);
+          if (idx > -1){ arr.splice(idx,1); }
+          else {
+            arr.push(oi);
+            if (S.answers[q.id] === oi){ delete S.answers[q.id]; btn.classList.remove("sel"); btn.setAttribute("aria-checked","false"); }
+          }
+          S.elim[q.id] = arr;
+          row.classList.toggle("elim", arr.indexOf(oi) > -1);
+          save(); updateStatus();
+        });
+        row.appendChild(btn); row.appendChild(x);
+        og.appendChild(row);
+      });
+      card.appendChild(og);
+    } else {
+      var gi = el("div","gridin");
+      var inp = el("input","giinput");
+      inp.type="text"; inp.autocomplete="off"; inp.spellcheck=false;
+      inp.setAttribute("aria-label","Answer for question "+q.id);
+      inp.placeholder="Your answer";
+      if (S.answers[q.id] != null) inp.value = S.answers[q.id];
+      inp.addEventListener("input", function(){ if (S.submitted) return; S.answers[q.id] = inp.value.trim(); save(); updateStatus(); });
+      gi.appendChild(inp);
+      gi.appendChild(el("span","gihint", q.gihint || "Enter one number. Fractions like 3/2 are fine; no mixed numbers."));
+      card.appendChild(gi);
+    }
+
+    card.appendChild(el("div","review qrev-"+q.id));
+    card.querySelector(".review").style.display = "none";
+    list.appendChild(card);
+  });
+
+  function counts(){
+    var a=0,f=0;
+    C.questions.forEach(function(q){
+      var v = S.answers[q.id];
+      if (v !== undefined && v !== null && v !== "") a++;
+      if (S.flags[q.id]) f++;
+    });
+    return { answered:a, flagged:f, total:C.questions.length };
+  }
+  function updateStatus(){
+    var c = counts();
+    document.getElementById("tbStatus").innerHTML = "<b>"+c.answered+"</b> / "+c.total+" answered &nbsp;·&nbsp; <b>"+c.flagged+"</b> flagged";
+  }
+  function renderClock(){
+    var rem = C.seconds - S.elapsed;
+    var ck = document.getElementById("tbClock");
+    ck.textContent = fmt(rem);
+    ck.classList.toggle("warn", rem <= C.warnAt && rem > C.dangerAt);
+    ck.classList.toggle("danger", rem <= C.dangerAt);
+  }
+  function startTimer(){
+    if (S.submitted) return;
+    if (S.elapsed >= C.seconds){ toast("The clock is already at zero — reset the attempt to run it again."); return; }
+    running = true;
+    document.getElementById("tbToggle").textContent = "Pause";
+    tick = setInterval(function(){
+      S.elapsed++;
+      if (S.elapsed >= C.seconds){ S.elapsed = C.seconds; stopTimer(); toast("Time's up. In practice you can keep working — submit when ready."); }
+      renderClock(); save();
+    }, 1000);
+  }
+  function stopTimer(){
+    running = false;
+    if (tick){ clearInterval(tick); tick = null; }
+    var t = document.getElementById("tbToggle");
+    if (t) t.textContent = (S.elapsed >= C.seconds) ? "Done" : "Start";
+  }
+  document.getElementById("tbToggle").addEventListener("click", function(){
+    if (running) { stopTimer(); this.textContent = "Resume"; }
+    else startTimer();
+  });
+
+  var panel = document.getElementById("revPanel");
+  function openPanel(){
+    var grid = document.getElementById("chipGrid");
+    grid.innerHTML = "";
+    C.questions.forEach(function(q){
+      var chip = el("button","chip"); chip.type="button"; chip.textContent = (C.qprefix||"")+q.id;
+      var answered = S.answers[q.id] !== undefined && S.answers[q.id] !== null && S.answers[q.id] !== "";
+      if (S.submitted){ chip.classList.add(isCorrect(q) ? "ok" : "no"); }
+      else if (answered){ chip.classList.add("answered"); }
+      if (S.flags[q.id]) chip.classList.add("flagged");
+      chip.addEventListener("click", function(){
+        closePanel();
+        var t = document.getElementById("q_"+q.id);
+        if (t) t.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
+      });
+      grid.appendChild(chip);
+    });
+    var c = counts();
+    document.getElementById("rpSub").textContent = S.submitted
+      ? (S.score.correct + " of " + S.score.total + " correct — tap a question to jump to its solution")
+      : (c.answered + " answered · " + (c.total - c.answered) + " blank · " + c.flagged + " flagged");
+    document.getElementById("rpLegend").innerHTML = S.submitted
+      ? "green = correct &nbsp; red = incorrect &nbsp; dot = flagged"
+      : "filled = answered &nbsp; outline = blank &nbsp; dot = flagged";
+    panel.classList.add("open");
+  }
+  function closePanel(){ panel.classList.remove("open"); }
+  document.getElementById("tbReview").addEventListener("click", openPanel);
+  document.getElementById("rpClose").addEventListener("click", closePanel);
+  panel.addEventListener("click", function(e){ if (e.target === panel) closePanel(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") closePanel(); });
+
+  function norm(v){ return String(v == null ? "" : v).replace(/\s+/g,"").replace(/^\+/,"").replace(/−/g,"-"); }
+  function isCorrect(q){
+    if (q.type === "mc") return S.answers[q.id] === q.answer;
+    var v = norm(S.answers[q.id]);
+    if (!v) return false;
+    return (q.accept || []).some(function(a){ return norm(a) === v; });
+  }
+  function doSubmit(){
+    if (S.submitted) return;
+    var c = counts();
+    var blanks = c.total - c.answered;
+    var msg = blanks
+      ? blanks + " question" + (blanks > 1 ? "s are" : " is") + " still blank. Score the attempt anyway?"
+      : "Score your attempt now? You can still read every solution afterward.";
+    askConfirm(msg, "Score it", finalizeSubmit);
+  }
+  function finalizeSubmit(){
+    S.submitted = true; stopTimer();
+    var correct = 0;
+    var byG = {};
+    C.dgroups.forEach(function(g){ byG[g] = { c:0, n:0 }; });
+    C.questions.forEach(function(q){
+      byG[q.dgroup].n++;
+      if (isCorrect(q)){ correct++; byG[q.dgroup].c++; }
+    });
+    S.score = { correct:correct, total:C.questions.length, byGroup:byG };
+    save();
+    renderSubmitted();
+    window.scrollTo({ top:0, behavior:"smooth" });
+  }
+  document.getElementById("tbSubmit").addEventListener("click", doSubmit);
+
+  function renderSubmitted(){
+    document.getElementById("tbSubmit").disabled = true;
+    document.getElementById("tbSubmit").textContent = "Submitted";
+    document.getElementById("tbToggle").disabled = true;
+
+    var sc = S.score;
+    var pct = Math.round(100 * sc.correct / sc.total);
+    var rows = C.dgroups.map(function(g){
+      var b = sc.byGroup[g]; if (!b.n) return "";
+      var p = Math.round(100 * b.c / b.n);
+      return '<div class="dgrow"><span>'+g+'</span><span class="dgbar"><div style="width:'+p+'%"></div></span><span>'+b.c+'/'+b.n+'</span></div>';
+    }).join("");
+    results.innerHTML =
+      '<h2>Attempt complete</h2>'+
+      '<div class="big">'+sc.correct+' / '+sc.total+'</div>'+
+      '<div class="sub">'+pct+'% · time used '+fmt(S.elapsed)+' of '+fmt(C.seconds)+'</div>'+
+      '<div class="dgroups">'+rows+'</div>'+
+      '<p style="font-size:0.93rem;margin:0.9rem 0 0">Each question below now shows the answer and a worked solution. For the full teacher write-up with distractor analysis, open the <code>-KEY.html</code> file in this folder.</p>';
+    results.style.display = "";
+
+    C.questions.forEach(function(q){
+      var card = document.getElementById("q_"+q.id);
+      var ok = isCorrect(q);
+      var rev = card.querySelector(".review");
+      rev.className = "review " + (ok ? "correct" : "wrong");
+      rev.style.display = "";
+      var yourAns, keyAns;
+      if (q.type === "mc"){
+        var opts = card.querySelectorAll(".optbtn");
+        opts.forEach(function(b, i){
+          b.disabled = true;
+          if (i === q.answer) b.classList.add("key");
+          if (!ok && S.answers[q.id] === i) b.classList.add("pickedwrong");
+        });
+        card.querySelectorAll(".xbtn").forEach(function(x){ x.disabled = true; });
+        yourAns = (S.answers[q.id] != null) ? ("ABCD"[S.answers[q.id]] + ") " + q.options[S.answers[q.id]].replace(/<[^>]+>/g,"")) : "— left blank —";
+        keyAns = "ABCD"[q.answer] + ") " + q.options[q.answer].replace(/<[^>]+>/g,"");
+      } else {
+        var inp = card.querySelector(".giinput");
+        if (inp) inp.disabled = true;
+        yourAns = (S.answers[q.id] && S.answers[q.id] !== "") ? S.answers[q.id] : "— left blank —";
+        keyAns = (q.accept || []).join(" or ");
+      }
+      rev.innerHTML =
+        '<div class="verdict">'+(ok ? "Correct" : "Not quite")+'</div>'+
+        '<div class="line">Correct answer: <b>'+keyAns+'</b></div>'+
+        '<div class="line">Your answer: <b>'+yourAns+'</b></div>'+
+        '<p class="exp">'+q.exp+'</p>'+
+        (q.tags ? '<div class="tags">'+q.tags+'</div>' : '');
+    });
+  }
+
+  document.getElementById("tbReset").addEventListener("click", function(){
+    askConfirm("Clear all answers, flags, cross-outs, and the timer for a fresh attempt?", "Reset", function(){
+      try { localStorage.removeItem(LS); } catch(e){}
+      location.reload();
+    });
+  });
+
+  var toastEl = document.getElementById("toast"), toastT = null;
+  function toast(msg){
+    toastEl.textContent = msg; toastEl.classList.add("show");
+    if (toastT) clearTimeout(toastT);
+    toastT = setTimeout(function(){ toastEl.classList.remove("show"); }, 3800);
+  }
+
+  renderClock(); updateStatus();
+  if (S.submitted) renderSubmitted();
+  else if (S.elapsed > 0) document.getElementById("tbToggle").textContent = "Resume";
+})();
+</script>
+
+</body>
+</html>

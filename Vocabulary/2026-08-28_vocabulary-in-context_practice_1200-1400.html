@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Words in Context — Precision Set</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap">
+<style>
+  :root{
+    --ground:#F4F5F8; --surface:#FFFFFF; --sunk:#E9ECF2;
+    --ink:#16202E; --ink-soft:#5C6A7D; --ink-faint:#8E99A8;
+    --accent:#33456B; --accent-soft:#E2E7F1;
+    --keep:#3B7A57; --keep-soft:#E6F0EA;
+    --kill:#B0413E; --kill-soft:#F7E9E8;
+    --warn:#9A6B1F; --warn-soft:#F5EAD6;
+    --rule:#D8DDE6;
+    --f-display:"Instrument Serif",Georgia,serif;
+    --f-body:"Literata",Georgia,"Times New Roman",serif;
+    --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#14181F; --surface:#1C222C; --sunk:#242C38;
+      --ink:#E6EAF0; --ink-soft:#9AA6B6; --ink-faint:#6B7788;
+      --accent:#8FA6D4; --accent-soft:#232D42;
+      --keep:#7FC49C; --keep-soft:#1B2A22;
+      --kill:#E08A85; --kill-soft:#2E2020;
+      --warn:#D8B056; --warn-soft:#2C2517;
+      --rule:#2C3542;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#14181F; --surface:#1C222C; --sunk:#242C38;
+    --ink:#E6EAF0; --ink-soft:#9AA6B6; --ink-faint:#6B7788;
+    --accent:#8FA6D4; --accent-soft:#232D42;
+    --keep:#7FC49C; --keep-soft:#1B2A22;
+    --kill:#E08A85; --kill-soft:#2E2020;
+    --warn:#D8B056; --warn-soft:#2C2517;
+    --rule:#2C3542;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--f-body);font-size:1.02rem;line-height:1.7;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:780px;margin:0 auto;padding:0 clamp(1rem,5vw,2rem)}
+  h1,h2,h3{margin:0;line-height:1.15;text-wrap:balance}
+  h1{font-family:var(--f-display);font-size:clamp(2.4rem,6vw,3.5rem);font-weight:400;letter-spacing:-0.01em}
+  h2{font-family:var(--f-display);font-size:clamp(1.5rem,4vw,2rem);font-weight:400;margin-top:2.4rem}
+  .eyebrow{font-family:var(--f-mono);font-size:0.7rem;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent)}
+  .hero{padding:clamp(2.4rem,7vw,3.6rem) 0 clamp(1.3rem,4vw,1.8rem);border-bottom:1px solid var(--rule)}
+  .hero .lede{font-size:1.08rem;color:var(--ink-soft);max-width:62ch;margin-top:0.9rem}
+  table.meta{border-collapse:collapse;margin:1.5rem 0 0;font-size:0.88rem;width:100%}
+  table.meta td{border:1px solid var(--rule);padding:0.42rem 0.7rem;vertical-align:top}
+  table.meta td:first-child{font-family:var(--f-mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);white-space:nowrap;width:1%;background:var(--sunk)}
+  table.meta code{font-family:var(--f-mono);font-size:0.8rem}
+  .instr{background:var(--sunk);border-left:3px solid var(--accent);padding:0.85rem 1.05rem;border-radius:0 3px 3px 0;margin:1.4rem 0}
+  .instr p{margin:0.25rem 0;font-size:0.92rem}
+
+  .toolbar{position:sticky;top:0;z-index:40;display:flex;flex-wrap:wrap;align-items:center;gap:0.6rem 1rem;
+    background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:0.6rem 0.85rem;margin:1.6rem 0 1.2rem;
+    box-shadow:0 2px 10px rgba(20,24,31,0.06)}
+  .tb-timer{display:flex;align-items:center;gap:0.55rem;font-family:var(--f-mono)}
+  #tbClock{font-size:1.15rem;font-weight:700;letter-spacing:0.02em;font-variant-numeric:tabular-nums;color:var(--ink)}
+  #tbClock.warn{color:var(--warn)} #tbClock.danger{color:var(--kill)}
+  .tb-status{font-family:var(--f-mono);font-size:0.74rem;color:var(--ink-soft);margin-right:auto;line-height:1.4}
+  .tb-status b{color:var(--ink)}
+  .tb-btn{font-family:var(--f-mono);font-size:0.76rem;font-weight:500;padding:0.42rem 0.8rem;border-radius:5px;
+    border:1px solid var(--rule);background:var(--surface);color:var(--ink);cursor:pointer;transition:background .14s ease,border-color .14s ease}
+  .tb-btn:hover{background:var(--sunk);border-color:var(--ink-faint)}
+  .tb-btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+  .tb-btn.primary:hover{filter:brightness(1.1)}
+  .tb-btn.ghost{border-style:dashed;color:var(--ink-soft)}
+  .tb-btn:disabled{opacity:0.5;cursor:default}
+  .tb-actions{display:flex;gap:0.5rem}
+
+  .qcard{border-top:1px solid var(--rule);padding:1.4rem 0;scroll-margin-top:5rem}
+  .qcard:first-of-type{border-top:none}
+  .qhead{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.5rem}
+  .qn{font-family:var(--f-mono);font-weight:700;color:var(--accent);font-size:0.85rem}
+  .flagbtn{margin-left:auto;font-family:var(--f-mono);font-size:0.68rem;letter-spacing:0.04em;text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:0.35rem;padding:0.25rem 0.55rem;border-radius:999px;
+    border:1px solid var(--rule);background:var(--surface);color:var(--ink-soft);cursor:pointer}
+  .flagbtn:hover{border-color:var(--warn);color:var(--warn)}
+  .flagbtn.on{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+  .stim{margin:0.5rem 0}
+  .blank{font-family:var(--f-mono);color:var(--accent);font-weight:700;letter-spacing:0.03em}
+  .stem{font-weight:600;margin:0.6rem 0 0.5rem;font-size:0.95rem}
+
+  .opts{display:flex;flex-direction:column;gap:0.35rem;margin-top:0.3rem}
+  .optrow{display:grid;grid-template-columns:1fr auto;gap:0.5rem;align-items:stretch}
+  .optbtn{text-align:left;display:grid;grid-template-columns:1.7rem 1fr;gap:0.5rem;align-items:start;
+    padding:0.5rem 0.7rem;border-radius:5px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);
+    font-family:var(--f-body);font-size:1rem;line-height:1.55;cursor:pointer;transition:border-color .14s ease,background .14s ease}
+  .optbtn:hover{background:var(--sunk)}
+  .optbtn .ol{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+  .optbtn.sel{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+  .xbtn{font-family:var(--f-mono);font-size:0.85rem;width:2.1rem;border-radius:5px;border:1px solid var(--rule);
+    background:var(--surface);color:var(--ink-faint);cursor:pointer;transition:color .14s ease,border-color .14s ease}
+  .xbtn:hover{color:var(--kill);border-color:var(--kill)}
+  .optrow.elim .optbtn{opacity:0.4}
+  .optrow.elim .optbtn .otx{text-decoration:line-through}
+  .optrow.elim .xbtn{color:var(--kill);border-color:var(--kill);background:var(--kill-soft)}
+
+  .review{margin-top:0.9rem;border-left:3px solid var(--ink-faint);background:var(--sunk);border-radius:0 4px 4px 0;padding:0.8rem 1rem}
+  .review.correct{border-left-color:var(--keep)}
+  .review.wrong{border-left-color:var(--kill)}
+  .review .verdict{font-family:var(--f-mono);font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.35rem}
+  .review.correct .verdict{color:var(--keep)}
+  .review.wrong .verdict{color:var(--kill)}
+  .review .line{font-family:var(--f-mono);font-size:0.8rem;margin:0.15rem 0;color:var(--ink-soft)}
+  .review .line b{color:var(--ink)}
+  .review .exp{margin:0.5rem 0 0;font-size:0.94rem}
+  .review .tags{font-family:var(--f-mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-faint);margin-top:0.5rem}
+  .optbtn.key{border-color:var(--keep);background:var(--keep-soft)}
+  .optbtn.pickedwrong{border-color:var(--kill);background:var(--kill-soft)}
+
+  .results{border:1px solid var(--accent);background:var(--accent-soft);border-radius:8px;padding:1.2rem 1.3rem;margin:1.4rem 0}
+  .results h2{margin:0 0 0.4rem;font-size:1.6rem}
+  .results .big{font-family:var(--f-mono);font-size:2.2rem;font-weight:700;color:var(--accent);line-height:1}
+  .results .sub{font-family:var(--f-mono);font-size:0.8rem;color:var(--ink-soft);margin-top:0.3rem}
+  .dgroups{display:flex;flex-direction:column;gap:0.5rem;margin-top:0.9rem}
+  .dgrow{display:grid;grid-template-columns:12rem 1fr auto;gap:0.7rem;align-items:center;font-family:var(--f-mono);font-size:0.76rem}
+  .dgbar{height:8px;background:var(--sunk);border-radius:4px;overflow:hidden}
+  .dgbar > div{height:100%;background:var(--accent)}
+  @media (max-width:560px){ .dgrow{grid-template-columns:1fr auto} .dgbar{grid-column:1 / -1} }
+
+  .revpanel{position:fixed;inset:0;z-index:60;background:rgba(20,24,31,0.45);display:none;align-items:flex-start;justify-content:center;padding:2rem 1rem}
+  .revpanel.open{display:flex}
+  .revcard{background:var(--surface);border:1px solid var(--rule);border-radius:10px;max-width:520px;width:100%;padding:1.2rem 1.3rem;max-height:80vh;overflow:auto}
+  .revcard h3{font-family:var(--f-display);font-size:1.4rem;margin-bottom:0.2rem}
+  .revcard .rp-sub{font-family:var(--f-mono);font-size:0.74rem;color:var(--ink-soft);margin-bottom:0.9rem}
+  .chipgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(3rem,1fr));gap:0.5rem}
+  .chip{font-family:var(--f-mono);font-size:0.78rem;padding:0.45rem 0;border-radius:5px;border:1px solid var(--rule);
+    background:var(--surface);color:var(--ink-soft);cursor:pointer;text-align:center;position:relative}
+  .chip.answered{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+  .chip.flagged::after{content:"";position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--warn)}
+  .chip.ok{background:var(--keep);border-color:var(--keep);color:#fff}
+  .chip.no{background:var(--kill);border-color:var(--kill);color:#fff}
+  .rp-legend{font-family:var(--f-mono);font-size:0.68rem;color:var(--ink-faint);margin-top:0.9rem;line-height:1.6}
+  .rp-close{margin-top:1rem}
+
+  .toast{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%);z-index:70;background:var(--ink);color:var(--ground);
+    font-family:var(--f-mono);font-size:0.78rem;padding:0.6rem 1rem;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .2s ease}
+  .toast.show{opacity:1}
+  .confirmbar{display:flex;flex-wrap:wrap;align-items:center;gap:0.6rem;background:var(--warn-soft);border:1px solid var(--warn);
+    border-radius:8px;padding:0.65rem 0.9rem;margin:0 0 1.2rem;font-family:var(--f-mono);font-size:0.8rem;color:var(--ink)}
+  .confirmbar .msg{margin-right:auto}
+
+  footer{font-family:var(--f-mono);font-size:0.72rem;color:var(--ink-faint);text-align:center;padding:2.4rem 1rem 3rem;border-top:1px solid var(--rule);margin-top:2.4rem}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+  @media print{
+    .toolbar,.revpanel,.toast,.flagbtn,.xbtn,#tbReset{display:none!important}
+    body{background:#fff;color:#000;font-size:10.5pt}
+    .hero{padding:0.5rem 0 1rem} h1{font-size:20pt}
+    .qcard{break-inside:avoid} .instr{background:none}
+    .optbtn{border:1px solid #999}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Digital SAT · Reading and Writing · Craft and Structure</span>
+    <h1>Words in Context — Precision Set</h1>
+    <p class="lede">Fifteen sentences, each with four options that all sit in roughly the same area of meaning. The task is never "which word is hardest" — it is "which word is exact for <em>this</em> sentence." The clue is always elsewhere in the sentence, not in the blank.</p>
+    <table class="meta">
+      <tr><td>Exam</td><td>Digital SAT</td></tr>
+      <tr><td>Section</td><td>Reading and Writing — Craft and Structure (Words in Context)</td></tr>
+      <tr><td>Target level</td><td>1200–1400 total score</td></tr>
+      <tr><td>Timing</td><td>12 minutes</td></tr>
+      <tr><td>Question count</td><td>15</td></tr>
+      <tr><td>Full write-up</td><td><code>2026-08-28_vocabulary-in-context_practice_1200-1400-KEY.html</code> (same folder — teacher copy)</td></tr>
+      <tr><td>Created</td><td>2026-08-28</td></tr>
+    </table>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <div class="instr">
+    <p><strong>Answer every question.</strong> No wrong-answer penalty.</p>
+    <p><strong>Read the whole sentence first.</strong> Predict a word of your own for the blank, then find the option closest to it.</p>
+    <p><strong>Cross out</strong> choices you have ruled out; <strong>flag</strong> anything to revisit. <strong>Nothing is scored until you press Submit</strong> — then each question shows the clue that fixes the answer. Progress is saved in this browser.</p>
+  </div>
+
+  <div id="app"></div>
+
+</main>
+
+<div class="revpanel" id="revPanel">
+  <div class="revcard">
+    <h3>Question map</h3>
+    <p class="rp-sub" id="rpSub"></p>
+    <div class="chipgrid" id="chipGrid"></div>
+    <p class="rp-legend" id="rpLegend"></p>
+    <button class="tb-btn rp-close" id="rpClose">Close</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<footer>LBEnglishCo · Digital SAT · Reading and Writing · Words in Context · Interactive · 2026-08-28</footer>
+
+<script>
+window.SAT_CONFIG = {
+  id: "vocab-wic-2026-08-28",
+  seconds: 12 * 60,
+  warnAt: 240,
+  dangerAt: 60,
+  qprefix: "",
+  dgroups: ["Restatement clue","Contrast clue"],
+  questions: [
+    { id:"1", type:"mc", dgroup:"Restatement clue", tags:"Craft and Structure · Words in Context · Restatement clue",
+      stim:"The committee's report was praised for its <span class='blank'>______</span> tone: it acknowledged the strengths of every proposal before explaining, without rancor, why it favored one.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["judicious","caustic","indifferent","evasive"], answer:0,
+      exp:"Clue: acknowledging every proposal's strengths and explaining a choice \"without rancor\" is balanced, fair-minded judgment. <b>B (caustic)</b> is ruled out by \"without rancor.\" <b>C (indifferent)</b> — the committee weighed every proposal, so it cared. <b>D (evasive)</b> — it did state a preference and its reasons." },
+    { id:"2", type:"mc", dgroup:"Contrast clue", tags:"Craft and Structure · Words in Context · Contrast clue",
+      stim:"Far from being <span class='blank'>______</span>, the novel's plot is tightly controlled: every apparently minor detail in the first chapter returns, transformed, in the last.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["intricate","haphazard","suspenseful","derivative"], answer:1,
+      exp:"\"Far from being ______, ... tightly controlled\" sets the blank against \"tightly controlled,\" so it means random or disorganized. <b>A (intricate)</b> is not an opposite of controlled. <b>C (suspenseful)</b> and <b>D (derivative)</b> are on entirely different axes." },
+    { id:"3", type:"mc", dgroup:"Restatement clue", tags:"Craft and Structure · Words in Context · Restatement clue",
+      stim:"The scientist was careful to present her findings as <span class='blank'>______</span>, noting that a larger sample might well overturn them.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["definitive","exhaustive","tentative","conclusive"], answer:2,
+      exp:"\"Noting that a larger sample might well overturn them\" signals the findings are not yet firm. <b>A (definitive)</b> and <b>D (conclusive)</b> mean settled beyond doubt — the opposite. <b>B (exhaustive)</b> is about coverage, not firmness." },
+    { id:"4", type:"mc", dgroup:"Contrast clue", tags:"Craft and Structure · Words in Context · Contrast clue",
+      stim:"Critics who expected the director's new film to <span class='blank'>______</span> the bombastic style of his early work were surprised by its restraint and quiet.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["abandon","conceal","satirize","intensify"], answer:3,
+      exp:"The critics \"were surprised by its restraint,\" so they must have expected <em>more</em> of the early bombast. <b>A (abandon)</b> — then restraint would confirm the expectation, not surprise it. <b>B (conceal)</b> doesn't fit a directorial style. <b>C (satirize)</b> — nothing suggests mockery." },
+    { id:"5", type:"mc", dgroup:"Restatement clue", tags:"Craft and Structure · Words in Context · Restatement clue",
+      stim:"The mayor's statement was widely described as <span class='blank'>______</span>: it promised much but committed to nothing that could later be checked.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["equivocal","blunt","meticulous","inflammatory"], answer:0,
+      exp:"\"Promised much but committed to nothing that could later be checked\" — deliberately vague, open to more than one reading. <b>B (blunt)</b> is the opposite. <b>C (meticulous)</b> is about care with detail. <b>D (inflammatory)</b> is about provocation." },
+    { id:"6", type:"mc", dgroup:"Restatement clue", tags:"Craft and Structure · Words in Context · Restatement clue",
+      stim:"Though the two theories appear to conflict, a closer reading shows them to be largely <span class='blank'>______</span>, each accounting for cases the other leaves unexplained.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["identical","complementary","contradictory","obsolete"], answer:1,
+      exp:"\"Each accounting for cases the other leaves unexplained\" — the theories fill each other's gaps. <b>A (identical)</b> — then they couldn't cover different cases. <b>C (contradictory)</b> — \"Though\" sets the real relationship against the apparent conflict. <b>D (obsolete)</b> — nothing says either is outdated." },
+    { id:"7", type:"mc", dgroup:"Restatement clue", tags:"Craft and Structure · Words in Context · Restatement clue",
+      stim:"The editor pushed the writer to <span class='blank'>______</span> the argument, cutting three paragraphs of background that most readers would already know.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["expand","obscure","streamline","abandon"], answer:2,
+      exp:"\"Cutting three paragraphs of background\" means making the argument leaner. <b>A (expand)</b> is the opposite. <b>B (obscure)</b> — cutting known material clarifies. <b>D (abandon)</b> — the argument stays; only background goes." },
+    { id:"8", type:"mc", dgroup:"Contrast clue", tags:"Craft and Structure · Words in Context · Contrast clue",
+      stim:"Archaeologists initially <span class='blank'>______</span> the site, assigning a single student to survey it; the discovery of a sealed tomb forced a dramatic reassessment.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["revered","excavated","documented","dismissed"], answer:3,
+      exp:"\"Assigning a single student to survey it\" plus \"forced a dramatic reassessment\" — they underrated the site at first. <b>A (revered)</b> is the opposite. <b>B (excavated)</b> and <b>C (documented)</b> describe careful work, which contradicts the minimal effort." },
+    { id:"9", type:"mc", dgroup:"Restatement clue", tags:"Craft and Structure · Words in Context · Restatement clue",
+      stim:"The essay's power lies in its <span class='blank'>______</span>: in ten pages it says what other writers take an entire book to say.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["concision","ambiguity","erudition","urgency"], answer:0,
+      exp:"\"In ten pages it says what other writers take an entire book to say\" — much in little space. <b>B (ambiguity)</b> would be a fault. <b>C (erudition)</b> is deep learning, not economy. <b>D (urgency)</b> — the length contrast points specifically to brevity." },
+    { id:"10", type:"mc", dgroup:"Restatement clue", tags:"Craft and Structure · Words in Context · Restatement clue",
+      stim:"Reviewers found the biography <span class='blank'>______</span>, weighed down by lists of dates and titles that never cohere into a portrait of the man.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["scathing","plodding","speculative","concise"], answer:1,
+      exp:"\"Weighed down by lists of dates and titles that never cohere\" — slow and lifeless. <b>A (scathing)</b> describes harsh criticism, not a dull book. <b>C (speculative)</b> — the problem is too many hard facts. <b>D (concise)</b> is the opposite." },
+    { id:"11", type:"mc", dgroup:"Restatement clue", tags:"Craft and Structure · Words in Context · Restatement clue",
+      stim:"The negotiator's reputation for <span class='blank'>______</span> made both sides willing to trust her: she was known never to misrepresent one party's position to the other.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["tenacity","charisma","probity","flexibility"], answer:2,
+      exp:"\"Known never to misrepresent one party's position to the other\" defines the blank: strict honesty. <b>Probity</b> means integrity. <b>A (tenacity)</b> is persistence, <b>B (charisma)</b> is charm, <b>D (flexibility)</b> is willingness to compromise — none is about truthfulness." },
+    { id:"12", type:"mc", dgroup:"Contrast clue", tags:"Craft and Structure · Words in Context · Contrast clue",
+      stim:"What looks like spontaneous banter on the show is in fact carefully <span class='blank'>______</span>, every line timed and rehearsed for weeks.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["improvised","abridged","transcribed","choreographed"], answer:3,
+      exp:"\"Every line timed and rehearsed for weeks\" — planned in advance, against the \"spontaneous\" appearance. <b>A (improvised)</b> is what it only <em>looks</em> like. <b>B (abridged)</b> is about length. <b>C (transcribed)</b> happens after the fact." },
+    { id:"13", type:"mc", dgroup:"Restatement clue", tags:"Craft and Structure · Words in Context · Restatement clue",
+      stim:"The critic argued that the painting's flaws were <span class='blank'>______</span> its achievement: the awkward perspective was exactly what gave the scene its unsettling force.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["inseparable from","fatal to","unrelated to","exaggerated by"], answer:0,
+      exp:"\"The awkward perspective was exactly what gave the scene its unsettling force\" — the flaw and the achievement are the same feature. <b>B (fatal to)</b> is the opposite. <b>C (unrelated to)</b> — the sentence links them tightly. <b>D (exaggerated by)</b> doesn't fit the logic." },
+    { id:"14", type:"mc", dgroup:"Contrast clue", tags:"Craft and Structure · Words in Context · Contrast clue",
+      stim:"Once <span class='blank'>______</span> by leading geologists, who mocked its reliance on the idea of drifting continents, plate tectonics is now the foundation of the field.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["celebrated","derided","funded","tolerated"], answer:1,
+      exp:"\"Who mocked its reliance on the idea of drifting continents\" — \"mocked\" defines the blank. <b>A (celebrated)</b> contradicts \"mocked.\" <b>C (funded)</b> is off-topic. <b>D (tolerated)</b> is too mild for active scorn." },
+    { id:"15", type:"mc", dgroup:"Restatement clue", tags:"Craft and Structure · Words in Context · Restatement clue",
+      stim:"The report is valuable less for its conclusions, which are familiar, than for the <span class='blank'>______</span> of its data, gathered over forty years of uninterrupted observation.",
+      stem:"Which choice completes the text with the most logical and precise word or phrase?",
+      options:["brevity","novelty","comprehensiveness","inconsistency"], answer:2,
+      exp:"\"Gathered over forty years of uninterrupted observation\" — the data's value is its scope. <b>A (brevity)</b> — forty years is not brief. <b>B (novelty)</b> — nothing says the data is new in kind. <b>D (inconsistency)</b> is a defect, but the sentence is praising the data." }
+  ]
+};
+</script>
+<script>
+(function(){
+  var C = window.SAT_CONFIG;
+  var LS = "satp_" + C.id;
+  var S = { answers:{}, elim:{}, flags:{}, elapsed:0, submitted:false, score:null };
+  try { var j = JSON.parse(localStorage.getItem(LS)); if (j && typeof j === "object") S = Object.assign(S, j); } catch(e){}
+  var running = false, tick = null;
+
+  function save(){ try { localStorage.setItem(LS, JSON.stringify(S)); } catch(e){} }
+  function el(t,c,h){ var n=document.createElement(t); if(c)n.className=c; if(h!=null)n.innerHTML=h; return n; }
+  function fmt(s){ s=Math.max(0,s); var m=Math.floor(s/60), r=s%60; return (m<10?"0":"")+m+":"+(r<10?"0":"")+r; }
+
+  var app = document.getElementById("app");
+
+  var bar = el("div","toolbar");
+  bar.innerHTML =
+    '<div class="tb-timer"><button id="tbToggle" class="tb-btn">Start</button><span id="tbClock">'+fmt(C.seconds)+'</span></div>'+
+    '<div class="tb-status" id="tbStatus"></div>'+
+    '<div class="tb-actions"><button id="tbReview" class="tb-btn">Review</button><button id="tbSubmit" class="tb-btn primary">Submit</button></div>';
+  app.appendChild(bar);
+
+  var confirmBar = el("div","confirmbar"); confirmBar.style.display="none"; app.appendChild(confirmBar);
+  var results = el("div","results"); results.style.display="none"; app.appendChild(results);
+  var list = el("div","qlist"); app.appendChild(list);
+
+  function askConfirm(message, okLabel, onOk){
+    confirmBar.innerHTML = '<span class="msg"></span>';
+    confirmBar.querySelector(".msg").textContent = message;
+    var ok = el("button","tb-btn primary", okLabel);
+    var no = el("button","tb-btn", "Keep working");
+    ok.addEventListener("click", function(){ confirmBar.style.display = "none"; onOk(); });
+    no.addEventListener("click", function(){ confirmBar.style.display = "none"; });
+    confirmBar.appendChild(ok); confirmBar.appendChild(no);
+    confirmBar.style.display = "flex";
+    confirmBar.scrollIntoView({ block:"nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+  var resetWrap = el("div",null,'<button id="tbReset" class="tb-btn ghost" style="margin-top:1.5rem">Reset attempt</button>');
+  app.appendChild(resetWrap);
+
+  C.questions.forEach(function(q){
+    var card = el("div","qcard"); card.id = "q_"+q.id;
+    var head = el("div","qhead");
+    head.appendChild(el("span","qn", "Question "+(C.qprefix||"")+q.id));
+    var flag = el("button","flagbtn"+(S.flags[q.id]?" on":""), '<span aria-hidden="true">&#9873;</span><span>Flag</span>');
+    flag.setAttribute("aria-pressed", S.flags[q.id]?"true":"false");
+    flag.addEventListener("click", function(){
+      S.flags[q.id] = !S.flags[q.id];
+      flag.classList.toggle("on", !!S.flags[q.id]);
+      flag.setAttribute("aria-pressed", S.flags[q.id]?"true":"false");
+      save(); updateStatus();
+    });
+    head.appendChild(flag);
+    card.appendChild(head);
+
+    if (q.stim) card.appendChild(el("div","stim", q.stim));
+    if (q.stem) card.appendChild(el("p","stem", q.stem));
+
+    var og = el("div","opts"); og.setAttribute("role","radiogroup");
+    q.options.forEach(function(opt, oi){
+      var letter = "ABCD"[oi];
+      var row = el("div","optrow");
+      var btn = el("button","optbtn", '<span class="ol">'+letter+')</span><span class="otx">'+opt+'</span>');
+      btn.type="button"; btn.setAttribute("role","radio");
+      btn.setAttribute("aria-label", "Choice "+letter+": "+opt.replace(/<[^>]+>/g,""));
+      if ((S.elim[q.id]||[]).indexOf(oi) > -1) row.classList.add("elim");
+      if (S.answers[q.id] === oi){ btn.classList.add("sel"); btn.setAttribute("aria-checked","true"); } else btn.setAttribute("aria-checked","false");
+      btn.addEventListener("click", function(){
+        if (S.submitted) return;
+        if ((S.elim[q.id]||[]).indexOf(oi) > -1) return;
+        S.answers[q.id] = oi;
+        og.querySelectorAll(".optbtn").forEach(function(b){ b.classList.remove("sel"); b.setAttribute("aria-checked","false"); });
+        btn.classList.add("sel"); btn.setAttribute("aria-checked","true");
+        save(); updateStatus();
+      });
+      var x = el("button","xbtn","&#10005;"); x.type="button";
+      x.title = "Cross out choice "+letter; x.setAttribute("aria-label","Cross out choice "+letter);
+      x.addEventListener("click", function(){
+        if (S.submitted) return;
+        var arr = (S.elim[q.id]||[]).slice();
+        var idx = arr.indexOf(oi);
+        if (idx > -1){ arr.splice(idx,1); }
+        else {
+          arr.push(oi);
+          if (S.answers[q.id] === oi){ delete S.answers[q.id]; btn.classList.remove("sel"); btn.setAttribute("aria-checked","false"); }
+        }
+        S.elim[q.id] = arr;
+        row.classList.toggle("elim", arr.indexOf(oi) > -1);
+        save(); updateStatus();
+      });
+      row.appendChild(btn); row.appendChild(x);
+      og.appendChild(row);
+    });
+    card.appendChild(og);
+
+    card.appendChild(el("div","review qrev-"+q.id));
+    card.querySelector(".review").style.display = "none";
+    list.appendChild(card);
+  });
+
+  function counts(){
+    var a=0,f=0;
+    C.questions.forEach(function(q){
+      var v = S.answers[q.id];
+      if (v !== undefined && v !== null && v !== "") a++;
+      if (S.flags[q.id]) f++;
+    });
+    return { answered:a, flagged:f, total:C.questions.length };
+  }
+  function updateStatus(){
+    var c = counts();
+    document.getElementById("tbStatus").innerHTML = "<b>"+c.answered+"</b> / "+c.total+" answered &nbsp;·&nbsp; <b>"+c.flagged+"</b> flagged";
+  }
+  function renderClock(){
+    var rem = C.seconds - S.elapsed;
+    var ck = document.getElementById("tbClock");
+    ck.textContent = fmt(rem);
+    ck.classList.toggle("warn", rem <= C.warnAt && rem > C.dangerAt);
+    ck.classList.toggle("danger", rem <= C.dangerAt);
+  }
+  function startTimer(){
+    if (S.submitted) return;
+    if (S.elapsed >= C.seconds){ toast("The clock is already at zero — reset the attempt to run it again."); return; }
+    running = true;
+    document.getElementById("tbToggle").textContent = "Pause";
+    tick = setInterval(function(){
+      S.elapsed++;
+      if (S.elapsed >= C.seconds){ S.elapsed = C.seconds; stopTimer(); toast("Time's up. In practice you can keep working — submit when ready."); }
+      renderClock(); save();
+    }, 1000);
+  }
+  function stopTimer(){
+    running = false;
+    if (tick){ clearInterval(tick); tick = null; }
+    var t = document.getElementById("tbToggle");
+    if (t) t.textContent = (S.elapsed >= C.seconds) ? "Done" : "Start";
+  }
+  document.getElementById("tbToggle").addEventListener("click", function(){
+    if (running) { stopTimer(); this.textContent = "Resume"; }
+    else startTimer();
+  });
+
+  var panel = document.getElementById("revPanel");
+  function openPanel(){
+    var grid = document.getElementById("chipGrid");
+    grid.innerHTML = "";
+    C.questions.forEach(function(q){
+      var chip = el("button","chip"); chip.type="button"; chip.textContent = (C.qprefix||"")+q.id;
+      var answered = S.answers[q.id] !== undefined && S.answers[q.id] !== null && S.answers[q.id] !== "";
+      if (S.submitted){ chip.classList.add(isCorrect(q) ? "ok" : "no"); }
+      else if (answered){ chip.classList.add("answered"); }
+      if (S.flags[q.id]) chip.classList.add("flagged");
+      chip.addEventListener("click", function(){
+        closePanel();
+        var t = document.getElementById("q_"+q.id);
+        if (t) t.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
+      });
+      grid.appendChild(chip);
+    });
+    var c = counts();
+    document.getElementById("rpSub").textContent = S.submitted
+      ? (S.score.correct + " of " + S.score.total + " correct — tap a question to jump to its walkthrough")
+      : (c.answered + " answered · " + (c.total - c.answered) + " blank · " + c.flagged + " flagged");
+    document.getElementById("rpLegend").innerHTML = S.submitted
+      ? "green = correct &nbsp; red = incorrect &nbsp; dot = flagged"
+      : "filled = answered &nbsp; outline = blank &nbsp; dot = flagged";
+    panel.classList.add("open");
+  }
+  function closePanel(){ panel.classList.remove("open"); }
+  document.getElementById("tbReview").addEventListener("click", openPanel);
+  document.getElementById("rpClose").addEventListener("click", closePanel);
+  panel.addEventListener("click", function(e){ if (e.target === panel) closePanel(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") closePanel(); });
+
+  function isCorrect(q){ return S.answers[q.id] === q.answer; }
+  function doSubmit(){
+    if (S.submitted) return;
+    var c = counts();
+    var blanks = c.total - c.answered;
+    var msg = blanks
+      ? blanks + " question" + (blanks > 1 ? "s are" : " is") + " still blank. Score the attempt anyway?"
+      : "Score your attempt now? You can still read every walkthrough afterward.";
+    askConfirm(msg, "Score it", finalizeSubmit);
+  }
+  function finalizeSubmit(){
+    S.submitted = true; stopTimer();
+    var correct = 0;
+    var byG = {};
+    C.dgroups.forEach(function(g){ byG[g] = { c:0, n:0 }; });
+    C.questions.forEach(function(q){
+      byG[q.dgroup].n++;
+      if (isCorrect(q)){ correct++; byG[q.dgroup].c++; }
+    });
+    S.score = { correct:correct, total:C.questions.length, byGroup:byG };
+    save();
+    renderSubmitted();
+    window.scrollTo({ top:0, behavior:"smooth" });
+  }
+  document.getElementById("tbSubmit").addEventListener("click", doSubmit);
+
+  function renderSubmitted(){
+    document.getElementById("tbSubmit").disabled = true;
+    document.getElementById("tbSubmit").textContent = "Submitted";
+    document.getElementById("tbToggle").disabled = true;
+
+    var sc = S.score;
+    var pct = Math.round(100 * sc.correct / sc.total);
+    var rows = C.dgroups.map(function(g){
+      var b = sc.byGroup[g]; if (!b.n) return "";
+      var p = Math.round(100 * b.c / b.n);
+      return '<div class="dgrow"><span>'+g+'</span><span class="dgbar"><div style="width:'+p+'%"></div></span><span>'+b.c+'/'+b.n+'</span></div>';
+    }).join("");
+    results.innerHTML =
+      '<h2>Attempt complete</h2>'+
+      '<div class="big">'+sc.correct+' / '+sc.total+'</div>'+
+      '<div class="sub">'+pct+'% · time used '+fmt(S.elapsed)+' of '+fmt(C.seconds)+'</div>'+
+      '<div class="dgroups">'+rows+'</div>'+
+      '<p style="font-size:0.93rem;margin:0.9rem 0 0">The two bars show how you did on sentences whose clue is a <em>restatement</em> of the blank versus a <em>contrast</em> with it. Each question below now shows its clue. The full teacher write-up is in the <code>-KEY.html</code> file.</p>';
+    results.style.display = "";
+
+    C.questions.forEach(function(q){
+      var card = document.getElementById("q_"+q.id);
+      var ok = isCorrect(q);
+      var rev = card.querySelector(".review");
+      rev.className = "review " + (ok ? "correct" : "wrong");
+      rev.style.display = "";
+      var opts = card.querySelectorAll(".optbtn");
+      opts.forEach(function(b, i){
+        b.disabled = true;
+        if (i === q.answer) b.classList.add("key");
+        if (!ok && S.answers[q.id] === i) b.classList.add("pickedwrong");
+      });
+      card.querySelectorAll(".xbtn").forEach(function(x){ x.disabled = true; });
+      var yourAns = (S.answers[q.id] != null) ? ("ABCD"[S.answers[q.id]] + ") " + q.options[S.answers[q.id]]) : "— left blank —";
+      var keyAns = "ABCD"[q.answer] + ") " + q.options[q.answer];
+      rev.innerHTML =
+        '<div class="verdict">'+(ok ? "Correct" : "Not quite")+'</div>'+
+        '<div class="line">Correct answer: <b>'+keyAns+'</b></div>'+
+        '<div class="line">Your answer: <b>'+yourAns+'</b></div>'+
+        '<p class="exp">'+q.exp+'</p>'+
+        (q.tags ? '<div class="tags">'+q.tags+'</div>' : '');
+    });
+  }
+
+  document.getElementById("tbReset").addEventListener("click", function(){
+    askConfirm("Clear all answers, flags, cross-outs, and the timer for a fresh attempt?", "Reset", function(){
+      try { localStorage.removeItem(LS); } catch(e){}
+      location.reload();
+    });
+  });
+
+  var toastEl = document.getElementById("toast"), toastT = null;
+  function toast(msg){
+    toastEl.textContent = msg; toastEl.classList.add("show");
+    if (toastT) clearTimeout(toastT);
+    toastT = setTimeout(function(){ toastEl.classList.remove("show"); }, 3800);
+  }
+
+  renderClock(); updateStatus();
+  if (S.submitted) renderSubmitted();
+  else if (S.elapsed > 0) document.getElementById("tbToggle").textContent = "Resume";
+})();
+</script>
+
+</body>
+</html>

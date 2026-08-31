@@ -1,0 +1,516 @@
+<title>The Core 100</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap">
+
+<style>
+  :root {
+    --ground:#F4F5F8; --surface:#FFFFFF; --sunk:#E9ECF2;
+    --ink:#16202E; --ink-soft:#5C6A7D; --ink-faint:#8E99A8;
+    --accent:#33456B; --accent-soft:#E2E7F1;
+    --kill:#B0413E; --kill-soft:#F7E9E8;
+    --keep:#3B7A57; --keep-soft:#E6F0EA;
+    --rule:#D8DDE6;
+    --f-display:"Instrument Serif", Georgia, serif;
+    --f-body:"Literata", Georgia, "Times New Roman", serif;
+    --f-mono:"JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#14181F; --surface:#1C222C; --sunk:#242C38;
+      --ink:#E6EAF0; --ink-soft:#9AA6B6; --ink-faint:#6B7788;
+      --accent:#8FA6D4; --accent-soft:#232D42;
+      --kill:#E08A85; --kill-soft:#2E2020;
+      --keep:#7FC49C; --keep-soft:#1B2A22;
+      --rule:#2C3542;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:#14181F; --surface:#1C222C; --sunk:#242C38;
+    --ink:#E6EAF0; --ink-soft:#9AA6B6; --ink-faint:#6B7788;
+    --accent:#8FA6D4; --accent-soft:#232D42;
+    --kill:#E08A85; --kill-soft:#2E2020;
+    --keep:#7FC49C; --keep-soft:#1B2A22;
+    --rule:#2C3542;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--ground); color:var(--ink); font-family:var(--f-body); font-size:1.02rem; line-height:1.7; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:860px; margin:0 auto; padding:0 clamp(1rem,5vw,2rem); }
+  h1,h2,h3 { margin:0; line-height:1.15; text-wrap:balance; }
+  h1 { font-family:var(--f-display); font-size:clamp(2.6rem,7vw,4.2rem); font-weight:400; letter-spacing:-0.01em; }
+  h2 { font-family:var(--f-display); font-size:clamp(1.8rem,4vw,2.4rem); font-weight:400; }
+  h3 { font-family:var(--f-mono); font-size:0.9rem; font-weight:700; letter-spacing:0.02em; }
+  .eyebrow { font-family:var(--f-mono); font-size:0.7rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--accent); }
+  p { max-width:70ch; }
+  .hero { padding:clamp(3rem,9vw,5.5rem) 0 clamp(2rem,5vw,3rem); border-bottom:1px solid var(--rule); }
+  .hero .lede { font-size:1.16rem; color:var(--ink-soft); margin-top:1.1rem; }
+  .hero .lede em { font-style:italic; color:var(--ink); }
+  .facts { display:flex; flex-wrap:wrap; gap:0 2.1rem; margin-top:1.7rem; font-family:var(--f-mono); font-size:0.78rem; }
+  .facts div { display:flex; flex-direction:column; gap:0.1rem; }
+  .facts span { color:var(--ink-faint); letter-spacing:0.08em; text-transform:uppercase; font-size:0.66rem; }
+  .facts b { font-weight:500; color:var(--ink); }
+  section { padding:clamp(2.5rem,7vw,4rem) 0; border-bottom:1px solid var(--rule); }
+  .sec-head { margin-bottom:1.7rem; }
+  .sec-head .eyebrow { display:block; margin-bottom:0.5rem; }
+  .sec-head p { color:var(--ink-soft); margin-top:0.75rem; }
+  .note { border-left:3px solid var(--accent); background:var(--sunk); padding:0.9rem 1.1rem; border-radius:0 3px 3px 0; margin:1.1rem 0; }
+  .note p { margin:0; font-size:0.93rem; }
+  .note .eyebrow { display:block; margin-bottom:0.3rem; }
+
+  button { font-family:var(--f-mono); font-size:0.78rem; font-weight:500; padding:0.5rem 0.85rem; border-radius:3px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); cursor:pointer; transition:background .15s ease, border-color .15s ease; }
+  button:hover { background:var(--sunk); border-color:var(--ink-faint); }
+  button.primary { background:var(--accent); border-color:var(--accent); color:var(--surface); }
+  button.primary:hover { filter:brightness(1.12); }
+  button.chip { border-radius:999px; }
+  button.chip.on { background:var(--accent); border-color:var(--accent); color:var(--surface); }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  /* filter chips */
+  .chiprow { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.3rem; }
+
+  /* flashcard */
+  .deckbar { display:flex; flex-wrap:wrap; align-items:center; gap:0.6rem; margin-bottom:1rem; font-family:var(--f-mono); font-size:0.78rem; color:var(--ink-soft); }
+  .deckbar .stat { margin-left:auto; }
+  .stagewrap { perspective:1400px; max-width:520px; margin:0 auto; }
+  .card3d { position:relative; height:260px; cursor:pointer; }
+  .face {
+    position:absolute; inset:0; backface-visibility:hidden; border-radius:8px;
+    border:1px solid var(--rule); background:var(--surface); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; padding:1.5rem; transition:transform .5s ease;
+  }
+  .face.front { transform:rotateY(0deg); }
+  .face.back { transform:rotateY(180deg); background:var(--accent-soft); }
+  .card3d.flipped .face.front { transform:rotateY(180deg); }
+  .card3d.flipped .face.back { transform:rotateY(360deg); }
+  .face .cat { font-family:var(--f-mono); font-size:0.66rem; color:var(--accent); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.9rem; }
+  .face.front .w { font-family:var(--f-display); font-size:2.6rem; }
+  .face .pos { font-family:var(--f-mono); font-size:0.72rem; color:var(--ink-faint); text-transform:uppercase; margin-top:0.5rem; }
+  .face.back .def { font-size:1.05rem; font-weight:600; margin-bottom:0.7rem; }
+  .face.back .ex { font-size:0.92rem; font-style:italic; color:var(--ink-soft); }
+  .hint { text-align:center; font-family:var(--f-mono); font-size:0.7rem; color:var(--ink-faint); margin-top:0.8rem; }
+  .deckctl { display:flex; justify-content:center; gap:0.6rem; margin-top:1.1rem; flex-wrap:wrap; }
+  .progressbar { height:5px; background:var(--rule); border-radius:3px; overflow:hidden; margin-bottom:0.9rem; }
+  .progressbar > div { height:100%; background:var(--accent); width:0%; transition:width .25s ease; }
+
+  /* exercises */
+  .ex-item { background:var(--surface); border:1px solid var(--rule); border-radius:4px; padding:1.1rem 1.25rem; margin-bottom:0.85rem; }
+  .ex-top { display:flex; gap:0.6rem; align-items:baseline; margin-bottom:0.6rem; }
+  .diff { font-family:var(--f-mono); font-size:0.64rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; padding:0.1rem 0.4rem; border-radius:2px; }
+  .diff.easy { background:var(--keep-soft); color:var(--keep); }
+  .diff.medium { background:var(--sunk); color:var(--ink-soft); }
+  .diff.hard { background:var(--kill-soft); color:var(--kill); }
+  .ex-sent { font-size:0.98rem; margin:0 0 0.7rem; }
+  .ex-sent .blank { font-family:var(--f-mono); color:var(--accent); font-weight:700; }
+  .ex-fb { display:none; font-family:var(--f-mono); font-size:0.82rem; padding:0.5rem 0.7rem; border-radius:3px; background:var(--keep-soft); color:var(--keep); margin-top:0.5rem; }
+  .ex-fb.show { display:block; }
+
+  /* quiz */
+  .opt { display:grid; grid-template-columns:1.5rem 1fr; gap:0.55rem; align-items:start; padding:0.4rem 0.5rem; border-radius:3px; cursor:pointer; }
+  .opt:hover { background:var(--sunk); }
+  .opt .ol { font-family:var(--f-mono); font-size:0.8rem; font-weight:700; color:var(--accent); }
+  .opt.correct { background:var(--keep-soft); box-shadow:inset 3px 0 0 var(--keep); }
+  .opt.mistake { background:var(--kill-soft); box-shadow:inset 3px 0 0 var(--kill); }
+
+  table.ref { width:100%; border-collapse:collapse; font-size:0.88rem; }
+  table.ref th, table.ref td { border:1px solid var(--rule); padding:0.5rem 0.7rem; text-align:left; vertical-align:top; }
+  table.ref th { background:var(--sunk); font-family:var(--f-mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em; }
+  table.ref td.w { font-family:var(--f-mono); font-weight:700; color:var(--accent); white-space:nowrap; }
+  .reftable-wrap { overflow-x:auto; }
+
+  ol.steps { padding-left:1.3rem; }
+  ol.steps > li { margin-bottom:0.7rem; max-width:68ch; font-size:0.95rem; }
+  footer { font-family:var(--f-mono); font-size:0.72rem; color:var(--ink-faint); text-align:center; padding:2rem 1rem 3rem; }
+</style>
+
+<div class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Digital SAT · Reading and Writing · Craft and Structure</span>
+    <h1>The Core 100</h1>
+    <p class="lede">The Digital SAT does not ask you to define words in isolation — that was the old SAT. It asks <em>Words in Context</em> questions: which of four close synonyms is the <em>precise</em> word for this exact sentence. These 100 words are the ones that keep showing up in that role.</p>
+    <div class="facts">
+      <div><span>Target score</span><b>1200 – 1600</b></div>
+      <div><span>Words</span><b>100 · 8 categories</b></div>
+      <div><span>Exercises</span><b>12 cloze · 8 quiz</b></div>
+      <div><span>Format</span><b>Flashcards + drills</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PART 1 : HOW IT'S ACTUALLY TESTED ============ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Part 1</span>
+      <h2>How this is actually tested</h2>
+      <p>A Words in Context question gives you a sentence with a blank and four options that are all in the same general neighborhood of meaning. You are not choosing the "hardest" word — you are choosing the one whose precise shade of meaning fits <em>this</em> sentence. That's why every card below includes an example sentence, not just a definition: the sentence is the actual skill.</p>
+    </div>
+    <div class="note">
+      <span class="eyebrow">How to study this list</span>
+      <p>Don't try to learn 100 words this week. Work through one category (10–13 words) at a time, spaced across several short sessions, and mix in review of an earlier category before adding a new one. A crammed list you forget in a week is worth less than 30 words you actually own.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PART 2 : FLASHCARDS ============ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Part 2 · Flashcards</span>
+      <h2>Flip, then judge yourself honestly</h2>
+      <p>Click the card to flip it. Mark "Knew it" or "Still learning" before moving on — "still learning" cards come back around sooner.</p>
+    </div>
+
+    <div class="chiprow" id="catChips"></div>
+
+    <div class="progressbar"><div id="progFill"></div></div>
+    <div class="deckbar">
+      <span id="deckPos">Card 1 of 100</span>
+      <span class="stat" id="deckStat">Known 0 · Learning 0</span>
+    </div>
+
+    <div class="stagewrap">
+      <div class="card3d" id="card3d">
+        <div class="face front">
+          <span class="cat" id="fCat"></span>
+          <div class="w" id="fWord"></div>
+          <span class="pos" id="fPos"></span>
+        </div>
+        <div class="face back">
+          <span class="cat" id="bCat"></span>
+          <div class="def" id="bDef"></div>
+          <div class="ex" id="bEx"></div>
+        </div>
+      </div>
+    </div>
+    <p class="hint">Click the card to flip</p>
+
+    <div class="deckctl">
+      <button id="prevBtn">← Prev</button>
+      <button id="shuffleBtn">Shuffle</button>
+      <button id="knownBtn">Knew it ✓</button>
+      <button id="learnBtn">Still learning</button>
+      <button id="nextBtn">Next →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PART 3 : WORDS IN CONTEXT — CLOZE ============ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Part 3 · Words in context</span>
+      <h2>Fill the blank</h2>
+      <p>Read the whole sentence before choosing — the answer usually depends on a clue elsewhere in the sentence, not the blank itself.</p>
+    </div>
+    <div id="clozeHost"></div>
+  </div>
+</section>
+
+<!-- ============ PART 4 : QUICK QUIZ ============ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Part 4 · Quick quiz</span>
+      <h2>Which word actually fits?</h2>
+      <p>All four options are plausible at a glance. Only one is precise.</p>
+    </div>
+    <div id="quizHost"></div>
+  </div>
+</section>
+
+<!-- ============ PART 5 : FULL REFERENCE LIST ============ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Part 5 · Reference</span>
+      <h2>All 100, for printing or scanning</h2>
+    </div>
+    <div class="reftable-wrap">
+      <table class="ref" id="refTable">
+        <thead><tr><th>Word</th><th>Part of speech</th><th>Definition</th><th>Category</th></tr></thead>
+        <tbody id="refBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOR THE TEACHER ============ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">For the teacher</span>
+      <h2>How to run this</h2>
+    </div>
+    <ol class="steps">
+      <li><b>Spread it over 8–10 sessions</b>, one category per session (10–13 words), 10–15 minutes of flashcards followed by that category's share of the cloze/quiz items. Do not attempt all 100 in one sitting.</li>
+      <li><b>Interleave old categories.</b> From session 3 onward, open with a two-minute flip-through of a category from two sessions ago before starting the new one — this is what actually moves words into long-term memory, not re-reading the list.</li>
+      <li><b>Frame it correctly for students:</b> this is not "SAT vocab to memorize," it is training for Words in Context questions specifically. Every drill should be done as "which word fits this sentence," never "what does this word mean" alone.</li>
+      <li><b>Homework:</b> the reference table's 12–13 words from that session's category, self-tested with the card covered. One category, not the whole page.</li>
+    </ol>
+  </div>
+</section>
+
+<footer>LBEnglishCo · Digital SAT · Reading and Writing · Vocabulary in Context</footer>
+
+<script>
+var WORDS = [
+{w:"fluctuate",pos:"v.",def:"to rise and fall irregularly",ex:"Prices fluctuated wildly during the shortage, spiking one week and dropping the next.",cat:"change"},
+{w:"wane",pos:"v.",def:"to gradually decrease in strength or extent",ex:"Public enthusiasm for the project began to wane once costs became clear.",cat:"change"},
+{w:"wax",pos:"v.",def:"to increase gradually (often paired with 'wane')",ex:"His influence waxed for a decade before slowly declining.",cat:"change"},
+{w:"proliferate",pos:"v.",def:"to increase rapidly in number",ex:"Online forums proliferated as internet access became widespread.",cat:"change"},
+{w:"dwindle",pos:"v.",def:"to become gradually smaller or fewer",ex:"The population of the species has dwindled to a few hundred.",cat:"change"},
+{w:"escalate",pos:"v.",def:"to increase rapidly in intensity or seriousness",ex:"The disagreement escalated into a full political crisis.",cat:"change"},
+{w:"mitigate",pos:"v.",def:"to make less severe or serious",ex:"New regulations were designed to mitigate the effects of flooding.",cat:"change"},
+{w:"augment",pos:"v.",def:"to make something greater by adding to it",ex:"The report was augmented with additional survey data.",cat:"change"},
+{w:"diminish",pos:"v.",def:"to make or become smaller in size, extent, or importance",ex:"Her authority diminished after the scandal.",cat:"change"},
+{w:"stagnate",pos:"v.",def:"to stop developing or making progress",ex:"Wage growth stagnated for nearly a decade.",cat:"change"},
+{w:"transient",pos:"adj.",def:"lasting only a short time; temporary",ex:"The improvement proved transient, fading within a month.",cat:"change"},
+{w:"exacerbate",pos:"v.",def:"to make a problem or situation worse",ex:"Drought conditions exacerbated the region's food shortages.",cat:"change"},
+
+{w:"substantiate",pos:"v.",def:"to provide evidence to support a claim",ex:"The researchers failed to substantiate their initial hypothesis.",cat:"argue"},
+{w:"refute",pos:"v.",def:"to prove a claim or theory wrong",ex:"New evidence refuted the long-accepted theory.",cat:"argue"},
+{w:"corroborate",pos:"v.",def:"to confirm or support with additional evidence",ex:"Witness testimony corroborated the physical evidence.",cat:"argue"},
+{w:"undermine",pos:"v.",def:"to weaken or damage a claim, position, or authority",ex:"A single flawed statistic undermined the entire argument.",cat:"argue"},
+{w:"contend",pos:"v.",def:"to assert something as a position in an argument",ex:"The author contends that the policy has done more harm than good.",cat:"argue"},
+{w:"posit",pos:"v.",def:"to put forward an idea as a basis for reasoning",ex:"The theory posits that early habits shape long-term behavior.",cat:"argue"},
+{w:"concede",pos:"v.",def:"to admit that a point made by an opponent is valid",ex:"She conceded that the plan had some merit.",cat:"argue"},
+{w:"discredit",pos:"v.",def:"to damage the reputation or credibility of a claim or person",ex:"The findings were quickly discredited by other scientists.",cat:"argue"},
+{w:"validate",pos:"v.",def:"to confirm the accuracy or worth of something",ex:"The follow-up study validated the earlier results.",cat:"argue"},
+{w:"reconcile",pos:"v.",def:"to make two seemingly conflicting ideas or facts compatible",ex:"The author attempts to reconcile the two competing theories.",cat:"argue"},
+{w:"plausible",pos:"adj.",def:"seeming reasonable or probable",ex:"Only one explanation remained plausible after the data was reviewed.",cat:"argue"},
+{w:"fallacious",pos:"adj.",def:"based on a mistaken belief; logically flawed",ex:"The argument rests on a fallacious assumption about human behavior.",cat:"argue"},
+{w:"cogent",pos:"adj.",def:"clear, logical, and convincing",ex:"She presented a cogent case for reform.",cat:"argue"},
+
+{w:"skeptical",pos:"adj.",def:"having doubts; not easily convinced",ex:"Critics remained skeptical of the company's claims.",cat:"attitude"},
+{w:"ambivalent",pos:"adj.",def:"having mixed or contradictory feelings",ex:"He felt ambivalent about accepting the promotion.",cat:"attitude"},
+{w:"dubious",pos:"adj.",def:"doubtful or questionable",ex:"The evidence for the claim is dubious at best.",cat:"attitude"},
+{w:"adamant",pos:"adj.",def:"refusing to change one's mind; firmly resolved",ex:"She was adamant that the deadline could not move.",cat:"attitude"},
+{w:"resolute",pos:"adj.",def:"admirably determined; unwavering",ex:"He remained resolute despite repeated setbacks.",cat:"attitude"},
+{w:"indifferent",pos:"adj.",def:"having no particular interest or concern",ex:"The audience seemed indifferent to the speaker's warnings.",cat:"attitude"},
+{w:"apathetic",pos:"adj.",def:"showing little interest or energy; lacking concern",ex:"Low turnout reflected an apathetic electorate.",cat:"attitude"},
+{w:"candid",pos:"adj.",def:"open and honest, especially about difficult topics",ex:"The interview was surprisingly candid about past failures.",cat:"attitude"},
+{w:"cynical",pos:"adj.",def:"distrustful of others' motives; assuming people act from self-interest",ex:"Years of broken promises left voters cynical.",cat:"attitude"},
+{w:"pragmatic",pos:"adj.",def:"dealing with things sensibly and realistically",ex:"The committee took a pragmatic approach rather than an idealistic one.",cat:"attitude"},
+{w:"credulous",pos:"adj.",def:"too ready to believe things; easily deceived",ex:"A credulous reader might accept the claim without checking the source.",cat:"attitude"},
+{w:"wary",pos:"adj.",def:"cautious about possible dangers or problems",ex:"Investors grew wary after the market's sudden drop.",cat:"attitude"},
+{w:"tentative",pos:"adj.",def:"not certain or fixed; provisional",ex:"The results are tentative and require further testing.",cat:"attitude"},
+
+{w:"eloquent",pos:"adj.",def:"fluent and persuasive in speaking or writing",ex:"Her eloquent defense of the policy won over skeptics.",cat:"tone"},
+{w:"terse",pos:"adj.",def:"brief and to the point; sometimes curt",ex:"His terse reply left little room for discussion.",cat:"tone"},
+{w:"verbose",pos:"adj.",def:"using more words than necessary",ex:"The report was criticized for being needlessly verbose.",cat:"tone"},
+{w:"lucid",pos:"adj.",def:"expressed clearly; easy to understand",ex:"The professor gave a remarkably lucid explanation of a complex topic.",cat:"tone"},
+{w:"ambiguous",pos:"adj.",def:"open to more than one interpretation; unclear",ex:"The wording of the clause was deliberately ambiguous.",cat:"tone"},
+{w:"nuanced",pos:"adj.",def:"characterized by subtle shades of meaning or expression",ex:"The essay offers a nuanced view of a divisive issue.",cat:"tone"},
+{w:"didactic",pos:"adj.",def:"intended to teach, often excessively moralizing",ex:"The novel's didactic tone alienated some readers.",cat:"tone"},
+{w:"satirical",pos:"adj.",def:"using humor or exaggeration to criticize",ex:"The satirical essay mocked corporate jargon.",cat:"tone"},
+{w:"ironic",pos:"adj.",def:"expressing meaning through language that signifies the opposite",ex:"It was ironic that the safety inspector's own office lacked a fire exit.",cat:"tone"},
+{w:"understated",pos:"adj.",def:"presented in a subtle, restrained way",ex:"His understated performance was more powerful than an obvious one would have been.",cat:"tone"},
+{w:"hyperbolic",pos:"adj.",def:"using exaggerated claims not meant to be taken literally",ex:"The advertisement's hyperbolic language promised impossible results.",cat:"tone"},
+{w:"colloquial",pos:"adj.",def:"characteristic of informal, everyday speech",ex:"The formal essay was marked down for colloquial phrasing.",cat:"tone"},
+
+{w:"empirical",pos:"adj.",def:"based on observation or experiment rather than theory",ex:"The claim lacked empirical support.",cat:"evidence"},
+{w:"anecdotal",pos:"adj.",def:"based on individual accounts rather than systematic study",ex:"The evidence was largely anecdotal, drawn from a handful of interviews.",cat:"evidence"},
+{w:"arbitrary",pos:"adj.",def:"based on random choice rather than reason or system",ex:"Critics called the cutoff score arbitrary.",cat:"evidence"},
+{w:"systematic",pos:"adj.",def:"done according to a fixed plan or method",ex:"The team conducted a systematic review of prior studies.",cat:"evidence"},
+{w:"rigorous",pos:"adj.",def:"thorough, careful, and exacting",ex:"The study underwent rigorous peer review.",cat:"evidence"},
+{w:"speculative",pos:"adj.",def:"based on guesswork rather than certain knowledge",ex:"The article's conclusions remain speculative.",cat:"evidence"},
+{w:"superficial",pos:"adj.",def:"concerned only with the obvious or shallow aspects",ex:"The analysis was superficial and ignored key variables.",cat:"evidence"},
+{w:"comprehensive",pos:"adj.",def:"complete and including everything necessary",ex:"The report offers a comprehensive account of the crisis.",cat:"evidence"},
+{w:"ostensible",pos:"adj.",def:"stated or appearing to be true, but not necessarily so",ex:"The ostensible reason for the delay masked a deeper problem.",cat:"evidence"},
+{w:"spurious",pos:"adj.",def:"false, though appearing genuine; not based on sound reasoning",ex:"The correlation turned out to be spurious.",cat:"evidence"},
+{w:"redundant",pos:"adj.",def:"no longer needed; superfluous",ex:"Several data points were redundant and could be removed.",cat:"evidence"},
+{w:"tenuous",pos:"adj.",def:"very weak or slight; barely valid",ex:"The link between the two events is tenuous at best.",cat:"evidence"},
+{w:"salient",pos:"adj.",def:"most noticeable or important",ex:"The report highlights the most salient risks.",cat:"evidence"},
+
+{w:"catalyst",pos:"n.",def:"a person or thing that precipitates change",ex:"The scandal acted as a catalyst for reform.",cat:"cause"},
+{w:"ramification",pos:"n.",def:"a consequence of an action, often complex or unwelcome",ex:"The policy's ramifications extended well beyond the industry it targeted.",cat:"cause"},
+{w:"precipitate",pos:"v.",def:"to cause something to happen suddenly",ex:"The announcement precipitated a sharp drop in stock prices.",cat:"cause"},
+{w:"impetus",pos:"n.",def:"a force that drives something forward; a stimulus",ex:"The report provided the impetus for new legislation.",cat:"cause"},
+{w:"repercussion",pos:"n.",def:"an indirect, often unintended, effect of an action",ex:"The decision had repercussions no one had anticipated.",cat:"cause"},
+{w:"deter",pos:"v.",def:"to discourage from acting through fear of consequences",ex:"Stiffer penalties were meant to deter repeat offenders.",cat:"cause"},
+{w:"inhibit",pos:"v.",def:"to hinder or restrain a process or action",ex:"Cold temperatures inhibit bacterial growth.",cat:"cause"},
+{w:"facilitate",pos:"v.",def:"to make an action or process easier",ex:"The new software facilitates faster data sharing.",cat:"cause"},
+{w:"perpetuate",pos:"v.",def:"to cause something to continue indefinitely",ex:"The policy perpetuated the very inequality it was meant to fix.",cat:"cause"},
+{w:"culminate",pos:"v.",def:"to reach a climax or final result",ex:"Years of negotiation culminated in a signed treaty.",cat:"cause"},
+{w:"instigate",pos:"v.",def:"to bring about or initiate an action",ex:"He was accused of instigating the walkout.",cat:"cause"},
+{w:"alleviate",pos:"v.",def:"to make suffering or a problem less severe",ex:"The subsidy was designed to alleviate financial strain on families.",cat:"cause"},
+
+{w:"audacious",pos:"adj.",def:"bold and daring, sometimes recklessly so",ex:"The company launched an audacious bid to enter a saturated market.",cat:"people"},
+{w:"obstinate",pos:"adj.",def:"stubbornly refusing to change one's opinion",ex:"He remained obstinate despite overwhelming evidence.",cat:"people"},
+{w:"deferential",pos:"adj.",def:"showing excessive respect for authority",ex:"Junior staff were noticeably deferential toward the director.",cat:"people"},
+{w:"gregarious",pos:"adj.",def:"fond of company; sociable",ex:"Her gregarious personality made her a natural fit for sales.",cat:"people"},
+{w:"aloof",pos:"adj.",def:"distant; not friendly or forthcoming",ex:"He remained aloof from his colleagues throughout the project.",cat:"people"},
+{w:"austere",pos:"adj.",def:"severe or strict in manner; without luxury",ex:"The monastery's austere lifestyle left little room for comfort.",cat:"people"},
+{w:"prudent",pos:"adj.",def:"acting with care and thought for the future",ex:"A prudent investor diversifies rather than betting on one stock.",cat:"people"},
+{w:"frivolous",pos:"adj.",def:"not serious in content or purpose; trivial",ex:"The board dismissed the proposal as a frivolous distraction.",cat:"people"},
+{w:"tenacious",pos:"adj.",def:"persistent and determined",ex:"Her tenacious pursuit of the story eventually uncovered the fraud.",cat:"people"},
+{w:"capricious",pos:"adj.",def:"given to sudden, unpredictable changes in mood or behavior",ex:"The capricious weather made planning the event difficult.",cat:"people"},
+{w:"complacent",pos:"adj.",def:"self-satisfied to the point of being unaware of danger",ex:"Market leaders can become complacent and lose ground to newcomers.",cat:"people"},
+{w:"benevolent",pos:"adj.",def:"well-meaning and kindly",ex:"The foundation is funded by a benevolent donor.",cat:"people"},
+{w:"disdain",pos:"n./v.",def:"a feeling of contempt; to regard with contempt",ex:"The critics viewed the remake with open disdain.",cat:"people"},
+
+{w:"paradox",pos:"n.",def:"a statement or situation that seems contradictory but may be true",ex:"It is a paradox that the safest cars often encourage the riskiest driving.",cat:"concept"},
+{w:"dichotomy",pos:"n.",def:"a division between two sharply contrasting things",ex:"The article challenges the dichotomy between nature and nurture.",cat:"concept"},
+{w:"anomaly",pos:"n.",def:"something that deviates from what is standard or expected",ex:"The unusually cold summer was treated as a statistical anomaly.",cat:"concept"},
+{w:"convention",pos:"n.",def:"an accepted or traditional way of doing something",ex:"The novel breaks from narrative convention by using multiple timelines.",cat:"concept"},
+{w:"hypothesis",pos:"n.",def:"a proposed explanation made on limited evidence, to be tested",ex:"The hypothesis was later confirmed by experimental data.",cat:"concept"},
+{w:"precedent",pos:"n.",def:"an earlier event or decision used as a guide for later ones",ex:"The ruling set a precedent for future cases.",cat:"concept"},
+{w:"consensus",pos:"n.",def:"general agreement among a group",ex:"Scientists have reached a broad consensus on the issue.",cat:"concept"},
+{w:"paradigm",pos:"n.",def:"a typical example or pattern; a framework of ideas",ex:"The discovery forced a paradigm shift in the field.",cat:"concept"},
+{w:"discrepancy",pos:"n.",def:"a difference between things that should be the same",ex:"Auditors noted a discrepancy between the two sets of records.",cat:"concept"},
+{w:"inference",pos:"n.",def:"a conclusion reached through reasoning from evidence",ex:"The claim rests on an inference, not a directly stated fact.",cat:"concept"},
+{w:"synthesis",pos:"n.",def:"the combination of separate elements to form a whole",ex:"The essay is a synthesis of research from several disciplines.",cat:"concept"},
+{w:"subjective",pos:"adj.",def:"based on personal opinion or feeling rather than fact",ex:"Taste in art is inherently subjective.",cat:"concept"}
+];
+
+var CATS = {
+  change:"Describing Change", argue:"Making & Evaluating Arguments", attitude:"Doubt, Certainty & Attitude",
+  tone:"Tone & Style", evidence:"Evidence & Reasoning", cause:"Cause & Effect",
+  people:"People & Behavior", concept:"Abstract & Academic Concepts"
+};
+
+var CLOZE = [
+  {sent:"Sales figures ___ throughout the year, rising in summer and falling sharply each winter.", ans:"fluctuated", diff:"easy"},
+  {sent:"The city council decided to ___ the original proposal with additional funding for public transit.", ans:"augment", diff:"easy"},
+  {sent:"New building codes were introduced to ___ the risk of flood damage in low-lying areas.", ans:"mitigate", diff:"medium"},
+  {sent:"Ignoring the warning signs only served to ___ an already serious problem.", ans:"exacerbate", diff:"medium"},
+  {sent:"The author does not merely describe the phenomenon; she ___ that it results directly from policy failure.", ans:"contends", diff:"medium"},
+  {sent:"After reviewing the data, the researcher ___ that her original hypothesis required revision.", ans:"conceded", diff:"medium"},
+  {sent:"Independent auditors were brought in to ___ the company's financial statements.", ans:"validate", diff:"hard"},
+  {sent:"Investors grew ___ as the market showed signs of instability.", ans:"wary", diff:"easy"},
+  {sent:"The findings should be treated as ___ until a larger sample can be tested.", ans:"tentative", diff:"medium"},
+  {sent:"His ___ response left the interviewer with more questions than answers.", ans:"terse", diff:"hard"},
+  {sent:"The report's most ___ finding was buried in a footnote rather than the executive summary.", ans:"salient", diff:"hard"},
+  {sent:"The whistleblower's testimony acted as a ___ for the agency's sweeping reforms.", ans:"catalyst", diff:"hard"}
+];
+
+var QUIZ = [
+  {sent:"Despite repeated warnings, the company's profits continued to ___, dropping nearly 40 percent within a year.", opts:["dwindle","proliferate","augment","corroborate"], ans:0, diff:"easy"},
+  {sent:"The panel remained ___ about the new treatment, insisting that only large-scale clinical trials could prove its safety.", opts:["skeptical","gregarious","benevolent","eloquent"], ans:0, diff:"easy"},
+  {sent:"Rather than presenting a fully developed theory, the author simply ___ an idea meant to spark further debate.", opts:["refuted","discredited","posited","substantiated"], ans:2, diff:"medium"},
+  {sent:"The negotiations, which had proceeded smoothly for weeks, suddenly ___ into open conflict after the leaked memo.", opts:["stagnated","waned","escalated","diminished"], ans:2, diff:"medium"},
+  {sent:"Although the two accounts of the incident differ in tone, their central details ___ one another.", opts:["undermine","discredit","contend","corroborate"], ans:3, diff:"medium"},
+  {sent:"Critics dismissed the study's central claim as ___, noting that it rested on a single, unrepresentative case.", opts:["empirical","systematic","anecdotal","rigorous"], ans:2, diff:"hard"},
+  {sent:"The committee's ___ approach favored workable compromises over ideologically pure but impractical solutions.", opts:["capricious","audacious","obstinate","pragmatic"], ans:3, diff:"medium"},
+  {sent:"The reviewer praised the novel's ___ handling of a difficult subject, noting that it avoided both sentimentality and oversimplification.", opts:["verbose","didactic","nuanced","hyperbolic"], ans:2, diff:"hard"}
+];
+
+/* ---------------- flashcards ---------------- */
+var deck = WORDS.slice();
+var pos = 0;
+var known = {}, learning = {};
+var activeCat = "all";
+
+function currentDeck() {
+  return activeCat === "all" ? deck : deck.filter(function(x){ return x.cat === activeCat; });
+}
+
+function renderChips() {
+  var host = document.getElementById('catChips');
+  var all = document.createElement('button');
+  all.className = 'chip on'; all.textContent = 'All (100)'; all.dataset.cat = 'all';
+  host.appendChild(all);
+  Object.keys(CATS).forEach(function(k){
+    var n = WORDS.filter(function(w){ return w.cat === k; }).length;
+    var b = document.createElement('button');
+    b.className = 'chip'; b.dataset.cat = k;
+    b.textContent = CATS[k] + ' (' + n + ')';
+    host.appendChild(b);
+  });
+  host.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click', function(){
+      host.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      activeCat = b.dataset.cat;
+      pos = 0;
+      renderCard();
+    });
+  });
+}
+
+function renderCard() {
+  var cd = currentDeck();
+  if (pos >= cd.length) pos = 0;
+  if (pos < 0) pos = cd.length - 1;
+  var item = cd[pos];
+  var c3 = document.getElementById('card3d');
+  c3.classList.remove('flipped');
+  document.getElementById('fCat').textContent = CATS[item.cat];
+  document.getElementById('fWord').textContent = item.w;
+  document.getElementById('fPos').textContent = item.pos;
+  document.getElementById('bCat').textContent = CATS[item.cat];
+  document.getElementById('bDef').textContent = item.def;
+  document.getElementById('bEx').textContent = item.ex;
+  document.getElementById('deckPos').textContent = 'Card ' + (pos+1) + ' of ' + cd.length;
+  var k = Object.keys(known).length, l = Object.keys(learning).length;
+  document.getElementById('deckStat').textContent = 'Known ' + k + ' · Learning ' + l;
+  document.getElementById('progFill').style.width = Math.round(((pos+1)/cd.length)*100) + '%';
+}
+
+document.getElementById('card3d').addEventListener('click', function(){ this.classList.toggle('flipped'); });
+document.getElementById('nextBtn').addEventListener('click', function(){ pos++; renderCard(); });
+document.getElementById('prevBtn').addEventListener('click', function(){ pos--; renderCard(); });
+document.getElementById('shuffleBtn').addEventListener('click', function(){
+  for (var i = deck.length - 1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t = deck[i]; deck[i]=deck[j]; deck[j]=t; }
+  pos = 0; renderCard();
+});
+document.getElementById('knownBtn').addEventListener('click', function(){
+  var item = currentDeck()[pos]; known[item.w] = true; delete learning[item.w];
+  pos++; renderCard();
+});
+document.getElementById('learnBtn').addEventListener('click', function(){
+  var item = currentDeck()[pos]; learning[item.w] = true; delete known[item.w];
+  pos++; renderCard();
+});
+
+renderChips();
+renderCard();
+
+/* ---------------- cloze ---------------- */
+var clozeHost = document.getElementById('clozeHost');
+CLOZE.forEach(function(it, i){
+  var div = document.createElement('div'); div.className = 'ex-item';
+  div.innerHTML =
+    '<div class="ex-top"><span class="diff ' + it.diff + '">' + it.diff + '</span></div>' +
+    '<p class="ex-sent">' + (i+1) + '. ' + it.sent.replace('___', '<span class="blank">_____</span>') + '</p>' +
+    '<button class="showBtn">Show answer</button>' +
+    '<div class="ex-fb">Answer: <b>' + it.ans + '</b></div>';
+  clozeHost.appendChild(div);
+  div.querySelector('.showBtn').addEventListener('click', function(){
+    div.querySelector('.ex-fb').classList.add('show');
+  });
+});
+
+/* ---------------- quiz ---------------- */
+var quizHost = document.getElementById('quizHost');
+QUIZ.forEach(function(it, qi){
+  var div = document.createElement('div'); div.className = 'ex-item';
+  var optsHtml = it.opts.map(function(o, oi){
+    return '<div class="opt" data-i="' + oi + '"><span class="ol">' + String.fromCharCode(65+oi) + '</span><span>' + o + '</span></div>';
+  }).join('');
+  div.innerHTML =
+    '<div class="ex-top"><span class="diff ' + it.diff + '">' + it.diff + '</span></div>' +
+    '<p class="ex-sent">' + (qi+1) + '. ' + it.sent.replace('___', '<span class="blank">_____</span>') + '</p>' +
+    optsHtml;
+  quizHost.appendChild(div);
+  div.querySelectorAll('.opt').forEach(function(o){
+    o.addEventListener('click', function(){
+      if (div.dataset.answered) return;
+      div.dataset.answered = '1';
+      var chosen = parseInt(o.dataset.i, 10);
+      div.querySelectorAll('.opt').forEach(function(x, xi){
+        if (xi === it.ans) x.classList.add('correct');
+        else if (xi === chosen) x.classList.add('mistake');
+      });
+    });
+  });
+});
+
+/* ---------------- reference table ---------------- */
+var refBody = document.getElementById('refBody');
+WORDS.forEach(function(w){
+  var tr = document.createElement('tr');
+  tr.innerHTML = '<td class="w">' + w.w + '</td><td>' + w.pos + '</td><td>' + w.def + '</td><td>' + CATS[w.cat] + '</td>';
+  refBody.appendChild(tr);
+});
+</script>

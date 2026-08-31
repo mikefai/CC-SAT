@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Answer Key — Four-Domain Starter Set</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap">
+<style>
+  :root{
+    --ground:#F4F5F8; --surface:#FFFFFF; --sunk:#E9ECF2;
+    --ink:#16202E; --ink-soft:#5C6A7D; --ink-faint:#8E99A8;
+    --accent:#33456B; --accent-soft:#E2E7F1;
+    --keep:#3B7A57; --kill:#B0413E;
+    --rule:#D8DDE6;
+    --f-display:"Instrument Serif",Georgia,serif;
+    --f-body:"Literata",Georgia,"Times New Roman",serif;
+    --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#14181F; --surface:#1C222C; --sunk:#242C38;
+      --ink:#E6EAF0; --ink-soft:#9AA6B6; --ink-faint:#6B7788;
+      --accent:#8FA6D4; --accent-soft:#232D42;
+      --keep:#7FC49C; --kill:#E08A85;
+      --rule:#2C3542;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#14181F; --surface:#1C222C; --sunk:#242C38;
+    --ink:#E6EAF0; --ink-soft:#9AA6B6; --ink-faint:#6B7788;
+    --accent:#8FA6D4; --accent-soft:#232D42;
+    --keep:#7FC49C; --kill:#E08A85;
+    --rule:#2C3542;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--f-body);font-size:1.02rem;line-height:1.7;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:820px;margin:0 auto;padding:0 clamp(1rem,5vw,2rem)}
+  h1,h2,h3{margin:0;line-height:1.15;text-wrap:balance}
+  h1{font-family:var(--f-display);font-size:clamp(2.2rem,6vw,3.2rem);font-weight:400;letter-spacing:-0.01em}
+  h2{font-family:var(--f-display);font-size:clamp(1.5rem,4vw,2rem);font-weight:400;margin-top:2.6rem}
+  .eyebrow{font-family:var(--f-mono);font-size:0.7rem;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent)}
+  .hero{padding:clamp(2.2rem,7vw,3.6rem) 0 clamp(1.2rem,4vw,1.8rem);border-bottom:1px solid var(--rule)}
+  .hero .lede{font-size:1.05rem;color:var(--ink-soft);max-width:60ch;margin-top:0.9rem}
+  table.meta{border-collapse:collapse;margin:1.5rem 0 0;font-size:0.9rem;width:100%}
+  table.meta td{border:1px solid var(--rule);padding:0.45rem 0.7rem;vertical-align:top}
+  table.meta td:first-child{font-family:var(--f-mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);white-space:nowrap;width:1%;background:var(--sunk)}
+  table.meta code{font-family:var(--f-mono);font-size:0.82rem}
+  .data-wrap{overflow-x:auto}
+  table.key{border-collapse:collapse;width:100%;font-size:0.86rem;margin:1.1rem 0}
+  table.key th,table.key td{border:1px solid var(--rule);padding:0.4rem 0.65rem;text-align:left}
+  table.key th{background:var(--sunk);font-family:var(--f-mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.03em}
+  table.key td.k{font-family:var(--f-mono);font-weight:700;color:var(--keep);text-align:center}
+  .count{background:var(--accent-soft);border-radius:5px;padding:0.85rem 1.05rem;font-family:var(--f-mono);font-size:0.8rem;line-height:1.6;margin:1.2rem 0}
+  .rat{border-top:1px solid var(--rule);padding:1.3rem 0}
+  .rat h3{font-family:var(--f-mono);font-size:0.92rem;color:var(--accent);margin-bottom:0.45rem}
+  .rat .tag{font-family:var(--f-mono);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-faint);font-weight:400}
+  .rat p{margin:0.5rem 0}
+  .rat .why{color:var(--ink)}
+  .rat ul{margin:0.5rem 0;padding-left:1.2rem;color:var(--ink-soft);font-size:0.95rem}
+  .rat ul b{color:var(--ink)}
+  .strat{background:var(--sunk);border-left:3px solid var(--keep);padding:0.6rem 0.9rem;border-radius:0 3px 3px 0;font-size:0.92rem;margin-top:0.6rem}
+  footer{font-family:var(--f-mono);font-size:0.72rem;color:var(--ink-faint);text-align:center;padding:2.5rem 1rem 3rem;border-top:1px solid var(--rule);margin-top:2.5rem}
+  @media print{body{background:#fff;color:#000;font-size:10pt}.hero{padding:0.5rem 0 1rem}.rat{break-inside:avoid}.count,.strat{background:none}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Answer Key · Teacher copy</span>
+    <h1>Four-Domain Starter Set</h1>
+    <p class="lede">Keys, domain and skill tags, difficulty, and a per-question breakdown of why each distractor fails.</p>
+    <table class="meta">
+      <tr><td>Worksheet</td><td><code>2026-08-28_reading-and-writing_practice_550-650.html</code> (same folder)</td></tr>
+      <tr><td>Target level</td><td>550–650 section score</td></tr>
+      <tr><td>Question count</td><td>14</td></tr>
+      <tr><td>Timing</td><td>17 minutes</td></tr>
+      <tr><td>Created</td><td>2026-08-28</td></tr>
+    </table>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <h2>At a glance</h2>
+  <div class="data-wrap">
+    <table class="key">
+      <thead><tr><th>Q</th><th>Key</th><th>Domain</th><th>Skill</th><th>Difficulty</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="k">A</td><td>Craft and Structure</td><td>Words in Context</td><td>Easy</td></tr>
+        <tr><td>2</td><td class="k">C</td><td>Craft and Structure</td><td>Words in Context</td><td>Medium</td></tr>
+        <tr><td>3</td><td class="k">D</td><td>Craft and Structure</td><td>Text Structure and Purpose</td><td>Medium</td></tr>
+        <tr><td>4</td><td class="k">B</td><td>Craft and Structure</td><td>Cross-Text Connections</td><td>Hard</td></tr>
+        <tr><td>5</td><td class="k">B</td><td>Information and Ideas</td><td>Central Ideas and Details</td><td>Easy</td></tr>
+        <tr><td>6</td><td class="k">C</td><td>Information and Ideas</td><td>Command of Evidence (textual)</td><td>Medium</td></tr>
+        <tr><td>7</td><td class="k">D</td><td>Information and Ideas</td><td>Command of Evidence (quantitative)</td><td>Hard</td></tr>
+        <tr><td>8</td><td class="k">A</td><td>Information and Ideas</td><td>Inferences</td><td>Medium</td></tr>
+        <tr><td>9</td><td class="k">B</td><td>Standard English Conventions</td><td>Boundaries</td><td>Easy</td></tr>
+        <tr><td>10</td><td class="k">C</td><td>Standard English Conventions</td><td>Form, Structure, and Sense</td><td>Medium</td></tr>
+        <tr><td>11</td><td class="k">A</td><td>Standard English Conventions</td><td>Form, Structure, and Sense</td><td>Medium</td></tr>
+        <tr><td>12</td><td class="k">D</td><td>Expression of Ideas</td><td>Transitions</td><td>Medium</td></tr>
+        <tr><td>13</td><td class="k">C</td><td>Expression of Ideas</td><td>Rhetorical Synthesis</td><td>Hard</td></tr>
+        <tr><td>14</td><td class="k">A</td><td>Craft and Structure</td><td>Text Structure and Purpose</td><td>Hard</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="count">
+    Answer distribution — A: 4 (Q1, 8, 11, 14) · B: 3 (Q4, 5, 9) · C: 4 (Q2, 6, 10, 13) · D: 3 (Q3, 7, 12)<br>
+    14 items, expected ~3.5 per letter. No option holds more than 4. Distribution is balanced; no rebalancing needed.
+  </div>
+
+  <div class="count">
+    Set placement — Q1, Q5, Q9 are Module 1 openers (easy). Q4, Q7, Q13, Q14 are Module 2 harder-path items.
+  </div>
+
+  <h2>Per-question breakdown</h2>
+
+  <div class="rat">
+    <h3>1. A) skeptical <span class="tag">— Craft and Structure · Easy</span></h3>
+    <p class="why">"Only after three years of regrowth did she describe herself as <em>genuinely optimistic</em>" tells you she was <em>not</em> optimistic before. The word must name that earlier doubt.</p>
+    <ul>
+      <li><b>B) enthusiastic</b> — reverses the arc; enthusiasm is the later state, not the initial one.</li>
+      <li><b>C) indifferent</b> — indifference is the absence of an opinion, but the sentence frames a change of <em>belief</em> driven by evidence, which implies prior doubt, not prior neutrality.</li>
+      <li><b>D) bewildered</b> — means confused, not doubtful; nothing in the sentence is puzzling her.</li>
+    </ul>
+    <p class="strat">Predict your own word before reading options. If you predicted "doubtful," you eliminate three choices without deliberating.</p>
+  </div>
+
+  <div class="rat">
+    <h3>2. C) self-critical <span class="tag">— Craft and Structure · Medium</span></h3>
+    <p class="why">The colon defines the blank: she "candidly documents the miscalculations that derailed her signature legislation." Recording your own errors frankly is being self-critical.</p>
+    <ul>
+      <li><b>A) self-aggrandizing</b> — the exact opposite, and "rather than burnishing her legacy" rules it out explicitly.</li>
+      <li><b>B) evasive</b> — contradicts "candidly."</li>
+      <li><b>D) partisan</b> — about political loyalty; not what the sentence measures.</li>
+    </ul>
+  </div>
+
+  <div class="rat">
+    <h3>3. D) It presents a historical fact that complicates conventional accounts <span class="tag">— Text Structure and Purpose · Medium</span></h3>
+    <p class="why">The sentence begins with "But" and delivers a fact (Korean movable type) that the last sentence explicitly says "complicate[s] the familiar story."</p>
+    <ul>
+      <li><b>A)</b> — the text never refutes the Korea claim; it endorses it.</li>
+      <li><b>B)</b> — the text says nothing about whether Korean type spread.</li>
+      <li><b>C)</b> — the author has no argument here to concede a weakness in; the passage is expository.</li>
+    </ul>
+  </div>
+
+  <div class="rat">
+    <h3>4. B) By contending that the gains are genuine but likely to fade <span class="tag">— Cross-Text Connections · Hard</span></h3>
+    <p class="why">Oyelaran's finding is that early gains "faded within eighteen months." He does not deny the gains happened; he denies they <em>last</em>. That is a challenge to Feld's word "durably."</p>
+    <ul>
+      <li><b>A)</b> — Text 2 never comments on interruptions; that detail is only in Text 1.</li>
+      <li><b>C)</b> — neither text disputes the commuting-time effect.</li>
+      <li><b>D)</b> — too strong. Oyelaran describes an eighteen-month decline, not an immediate loss.</li>
+    </ul>
+    <p class="strat">For cross-text response questions, name the precise point of disagreement first ("permanent vs. temporary"), then find the option that matches it.</p>
+  </div>
+
+  <div class="rat">
+    <h3>5. B) The axolotl retains juvenile features into adulthood, a trait valuable to science <span class="tag">— Central Ideas and Details · Easy</span></h3>
+    <p class="why">Two sentences: (1) the axolotl keeps larval traits and skips metamorphosis — neoteny; (2) this has made it a favored research subject. B combines both.</p>
+    <ul>
+      <li><b>A)</b> — "only amphibian" is an overreach the text never claims.</li>
+      <li><b>C)</b> — habitat is background detail, not the main idea.</li>
+      <li><b>D)</b> — the text describes the axolotl's neoteny, not a disadvantage for other species.</li>
+    </ul>
+  </div>
+
+  <div class="rat">
+    <h3>6. C) "The final 1967 text is three lines, cut from a thirty-line 1924 version" <span class="tag">— Command of Evidence (textual) · Medium</span></h3>
+    <p class="why">The claim is about the <em>scale</em> of revision. Thirty lines down to three is direct, quantified evidence of a drastic cut.</p>
+    <ul>
+      <li><b>A)</b> — about her career length, not this poem's revision.</li>
+      <li><b>B)</b> — critics' disagreement speaks to reception, not to how much changed.</li>
+      <li><b>D)</b> — her general care with syllables says nothing about one poem's revision history.</li>
+    </ul>
+    <p class="strat">Underline the exact claim ("bears little resemblance to the original"). The right evidence attacks that claim's key term — here, the amount of change.</p>
+  </div>
+
+  <div class="rat">
+    <h3>7. D) The share fell steadily from 71% to 44% as commute length rose <span class="tag">— Command of Evidence (quantitative) · Hard</span></h3>
+    <p class="why">The conclusion has <em>two</em> parts — highest at the shortest commute <em>and</em> a steady decline. Only D traces the full trend across all four rows.</p>
+    <ul>
+      <li><b>A)</b> — supports only "highest at the shortest commute"; says nothing about the decline.</li>
+      <li><b>B)</b> — reports one endpoint; consistent with many patterns, not just a steady decline.</li>
+      <li><b>C)</b> — shows one step down (63% → 52%), not the whole trend.</li>
+    </ul>
+    <p class="strat">Count the claims in the conclusion. Two claims need an answer that supplies data for both.</p>
+  </div>
+
+  <div class="rat">
+    <h3>8. A) serves the same purpose that growing toward light serves later <span class="tag">— Inferences · Medium</span></h3>
+    <p class="why">The passage says growing toward darkness "reliably leads the seedling to a surface it can climb toward the canopy." Reaching the canopy is exactly the goal phototropism serves in a mature plant — so the behavior is functional, just via a different cue.</p>
+    <ul>
+      <li><b>B)</b> — the text calls the behavior "reliable," the opposite of an error.</li>
+      <li><b>C)</b> — water stress is never mentioned.</li>
+      <li><b>D)</b> — directly contradicts "leads the seedling to a surface it can climb toward the canopy."</li>
+    </ul>
+  </div>
+
+  <div class="rat">
+    <h3>9. B) predecessor, and <span class="tag">— Boundaries · Easy</span></h3>
+    <p class="why">Both halves are independent clauses ("The telescope can detect…" / "it catalogued…"). Two independent clauses join with a comma <em>plus</em> a coordinating conjunction.</p>
+    <ul>
+      <li><b>A) predecessor,</b> — comma splice; a comma alone cannot join two independent clauses.</li>
+      <li><b>C) predecessor</b> — fused sentence (run-on), no punctuation at all.</li>
+      <li><b>D) predecessor; and</b> — a semicolon already does the joining; adding "and" is redundant and non-standard.</li>
+    </ul>
+    <p class="strat">Cover the blank: "can each side stand alone?" If yes to both, you need a period, a semicolon, or a comma + conjunction.</p>
+  </div>
+
+  <div class="rat">
+    <h3>10. C) allows <span class="tag">— Form, Structure, and Sense · Medium</span></h3>
+    <p class="why">The subject is "array" (singular). "Of strain sensors mounted along the bridge's underside" is a prepositional phrase and cannot contain the subject.</p>
+    <ul>
+      <li><b>A) have allowed</b> / <b>B) allow</b> / <b>D) are allowing</b> — all plural, agreeing with "sensors" instead of "array."</li>
+    </ul>
+    <p class="strat">Mentally delete every prepositional phrase, then read subject next to verb: "the array … allows."</p>
+  </div>
+
+  <div class="rat">
+    <h3>11. A) had been climbing <span class="tag">— Form, Structure, and Sense · Medium</span></h3>
+    <p class="why">"By the time the expedition reached the summit" is a completed past event. The nineteen hours of climbing happened <em>before</em> that past point, so you need the past perfect progressive.</p>
+    <ul>
+      <li><b>B) has been climbing</b> — present perfect; wrong time frame for a narrative set entirely in the past.</li>
+      <li><b>C) climbs</b> — simple present; no time relationship to the past reference point.</li>
+      <li><b>D) is climbing</b> — present progressive; same problem.</li>
+    </ul>
+  </div>
+
+  <div class="rat">
+    <h3>12. D) However, <span class="tag">— Transitions · Medium</span></h3>
+    <p class="why">Sentence 1 lists advantages (lighter, corrosion-resistant). Sentence 2 gives a disadvantage (expensive, limited use). The relationship is contrast.</p>
+    <ul>
+      <li><b>A) For instance</b> — sentence 2 is not an example of the alloy's advantages.</li>
+      <li><b>B) Therefore</b> — the high cost is not a consequence of being light and corrosion-resistant.</li>
+      <li><b>C) Similarly</b> — the two sentences point in opposite directions, not the same one.</li>
+    </ul>
+    <p class="strat">Name the relationship in plain words ("but") before looking at the options. Never pick a transition by how sophisticated it sounds.</p>
+  </div>
+
+  <div class="rat">
+    <h3>13. C) Though Voyager 1 was built to study Jupiter and Saturn, it has since traveled into interstellar space <span class="tag">— Rhetorical Synthesis · Hard</span></h3>
+    <p class="why">The goal is to emphasize <em>change</em> since launch. Only C sets the original purpose against the current situation ("Though … it has since …").</p>
+    <ul>
+      <li><b>A)</b> — pairs launch date with a still-true fact; no sense of change.</li>
+      <li><b>B)</b> — states the current status but omits the original mission, so there is nothing to change <em>from</em>.</li>
+      <li><b>D)</b> — describes only the starting point.</li>
+    </ul>
+    <p class="strat">Rhetorical Synthesis is not a reading question — every option is factually true. Read the goal sentence first, underline its key idea ("has changed"), and eliminate on that alone.</p>
+  </div>
+
+  <div class="rat">
+    <h3>14. A) To argue that turning penicillin into a usable drug involved far more than Fleming's observation <span class="tag">— Text Structure and Purpose · Hard</span></h3>
+    <p class="why">The whole paragraph pushes against the "lucky accident" story: "would have led nowhere without" Florey and Chain; "the product of a laboratory program, not a lucky glance."</p>
+    <ul>
+      <li><b>B)</b> — the text never discusses how penicillin acts on bacteria.</li>
+      <li><b>C)</b> — the text credits Florey and Chain; it does not accuse them of anything.</li>
+      <li><b>D)</b> — the 1928 dish is mentioned in one clause, not described.</li>
+    </ul>
+  </div>
+
+  <h2>Scoring and next steps</h2>
+  <div class="data-wrap">
+    <table class="key">
+      <thead><tr><th>Raw score</th><th>Reading</th></tr></thead>
+      <tbody>
+        <tr><td>12–14</td><td>On track for 650+. Shift focus to timing and to the two or three hardest question types.</td></tr>
+        <tr><td>9–11</td><td>Solid base. Target the specific domain(s) missed — the "At a glance" table tells you which.</td></tr>
+        <tr><td>0–8</td><td>Reteach the weak domain before more practice. Volume will not fix a strategy gap.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>Say every session:</strong> the Digital SAT has no wrong-answer penalty. A blank and a wrong answer score identically, so guessing is always strictly better than leaving a blank.</p>
+
+</main>
+
+<footer>LBEnglishCo · Digital SAT · Reading and Writing · Answer key · 2026-08-28</footer>
+
+</body>
+</html>

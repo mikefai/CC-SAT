@@ -1,0 +1,10 @@
+{
+  "name": "sat-vocab-mastery-app",
+  "version": "1.0.0",
+  "description": "Offline SAT vocabulary mastery app: flashcards and practice, no frameworks or CDNs",
+  "private": true,
+  "scripts": {
+    "start": "npx --yes serve -l 5502 .",
+    "start:open": "npx --yes serve -l 5502 . && start http://localhost:5502"
+  }
+}

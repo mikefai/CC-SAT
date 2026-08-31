@@ -1,88 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAT Vocabulary Mastery App</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAT Vocabulary Mastery — Interactive Flashcards & Quiz</title>
+<meta name="description" content="SAT Vocabulary Mastery — interactive flashcards and quiz for the 1200–1400 band. Offline, progress saved locally.">
+<meta name="theme-color" content="#3148c7">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>SAT Vocabulary Mastery</h1>
-            <p class="subtitle">Interactive Flashcards & Quiz</p>
-            <span class="target-level">1200–1400 Score Range</span>
+  <div class="container">
+    <header>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:.6rem">
+        <a href="../index.html" style="font-size:.82rem;font-weight:700;color:#64748b;text-decoration:none">← SAT Vocabulary</a>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#3148c7;background:#e8ecff;border:1px solid #cbd5ff;border-radius:999px;padding:.25rem .6rem">Offline · Local Progress</span>
+      </div>
+      <h1>SAT Vocabulary Mastery</h1>
+      <p class="subtitle">Tap a card to reveal definition & example — mark your way to mastery.</p>
+      <span class="target-level">1200–1400 Score Range</span>
 
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-value" id="totalWords">0</div>
-                    <div class="stat-label">Total Words</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="masteredCount">0</div>
-                    <div class="stat-label">Mastered</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="learningCount">0</div>
-                    <div class="stat-label">Learning</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="quizScore">0</div>
-                    <div class="stat-label">Quiz Score</div>
-                </div>
-            </div>
+      <div class="stats" aria-label="Progress stats">
+        <div class="stat-card"><div class="stat-value" id="totalWords">0</div><div class="stat-label">Total Words</div></div>
+        <div class="stat-card"><div class="stat-value" id="masteredCount">0</div><div class="stat-label">Mastered</div></div>
+        <div class="stat-card"><div class="stat-value" id="learningCount">0</div><div class="stat-label">Learning</div></div>
+        <div class="stat-card"><div class="stat-value" id="quizScore">0</div><div class="stat-label">Quiz Score</div></div>
+      </div>
 
-            <div class="controls">
-                <button onclick="loadFlashcards()">Reload Flashcards</button>
-                <button class="secondary" onclick="startQuiz()">Start Quiz</button>
-            </div>
-        </header>
+      <div class="controls">
+        <button type="button" onclick="loadFlashcards()">↻ Reload Cards</button>
+        <button type="button" class="secondary" onclick="startQuiz()">Start Quiz →</button>
+      </div>
+    </header>
 
-        <section class="progress-section">
-            <h2>Learning Progress</h2>
-            <p>Build your vocabulary for the SAT. Click cards to flip and reveal definitions.</p>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
-            </div>
-            <p style="font-size: 13px; color: #64748b; margin-top: 8px;">
-                Click "Mark Mastered" as you learn words.
-            </p>
-        </section>
+    <section class="progress-section" aria-label="Learning progress">
+      <h2>Learning Progress</h2>
+      <p>Click cards to flip. Flip back when you can recall from memory.</p>
+      <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <p style="font-size:.82rem;color:#94a3b8;margin-top:.45rem">Tip: “Mark Mastered” is tracked locally on this device. Aim for 50+ words/week.</p>
+    </section>
 
-        <section>
-            <h2>Flashcards</h2>
-            <div class="card-container" id="cardContainer"></div>
-        </section>
+    <section aria-label="Flashcards">
+      <h2 style="font-family:Fraunces,serif;font-weight:800;font-size:1.15rem;letter-spacing:-.015em;margin:1.2rem 0 .3rem">Flashcards</h2>
+      <div class="card-container" id="cardContainer"></div>
+    </section>
 
-        <section class="quiz-section hidden" id="quizSection">
-            <h2>Quick Quiz</h2>
-            <div class="quiz-question" id="quizQuestion"></div>
-            <div class="options" id="quizOptions"></div>
-            <div id="quizFeedback"></div>
-        </section>
+    <section class="quiz-section hidden" id="quizSection" aria-live="polite">
+      <h2>Quick Quiz</h2>
+      <div class="quiz-question" id="quizQuestion"></div>
+      <div class="options" id="quizOptions"></div>
+      <div id="quizFeedback"></div>
+    </section>
 
-        <section class="progress-section">
-            <h2>How to Use This App</h2>
-            <p>
-                <strong>1. Learn:</strong> Click each card to reveal the definition and example sentence.
-            </p>
-            <p>
-                <strong>2. Review:</strong> Go through cards multiple times until you recognize words instantly.
-            </p>
-            <p>
-                <strong>3. Quiz:</strong> Test yourself with the built-in quiz to reinforce learning.
-            </p>
-            <p>
-                <strong>Target:</strong> Aim to master 50+ words per week for sustained SAT prep.
-            </p>
-        </section>
+    <section class="progress-section">
+      <h2>How to Use This App</h2>
+      <div style="display:grid;gap:.7rem;margin-top:.8rem">
+        <p><strong>1 · Learn:</strong> Tap each card to reveal definition + example sentence.</p>
+        <p><strong>2 · Recall:</strong> Flip back and say the meaning before peeking again.</p>
+        <p><strong>3 · Quiz:</strong> Hit “Start Quiz” — 3 questions, instant feedback, best score saved.</p>
+      </div>
+      <p style="margin-top:.9rem"><strong>Target:</strong> 15 min/day. Shuffle mentally, not just visually.</p>
+    </section>
 
-        <footer>
-            <p>SAT Vocabulary Mastery App | Created 2026-08-30</p>
-            <p>Use this interactive tool to build and retain vocabulary for the SAT.</p>
-        </footer>
-    </div>
-
-    <script src="js/app.js"></script>
+    <footer>
+      <p>SAT Vocabulary Mastery · Created 2026-08-30 · Fully offline</p>
+    </footer>
+  </div>
+  <script src="js/app.js"></script>
 </body>
 </html>

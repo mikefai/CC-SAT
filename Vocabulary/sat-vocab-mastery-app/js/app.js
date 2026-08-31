@@ -90,36 +90,47 @@ function initializeApp() {
     updateStats();
 }
 
+function cardInner(vocab, hint){
+  return `<span class="hint">${hint}</span><div class="vocab-word">${vocab.word}</div><div class="vocab-pos">${vocab.pos}</div><div class="vocab-definition">${vocab.definition}</div><div class="vocab-example">"${vocab.example}"</div>`;
+}
+function collapsedInner(word){
+  return `<span class="hint">Tap to reveal</span><div class="vocab-word">${word}</div><div class="vocab-pos" style="opacity:.6">tap to flip</div>`;
+}
 function loadFlashcards() {
     const container = document.getElementById('cardContainer');
+    if(!container) return;
     container.innerHTML = '';
-
-    vocabularyData.forEach((vocab, index) => {
+    vocabularyData.forEach((vocab) => {
         const card = document.createElement('div');
         card.className = 'vocab-card';
+        card.setAttribute('role','button');
+        card.setAttribute('tabindex','0');
+        card.setAttribute('aria-label', `Flashcard: ${vocab.word}. Press to flip.`);
         card.onclick = () => flipCard(card);
-        card.innerHTML = `
-            <div class="vocab-word">${vocab.word}</div>
-            <div class="vocab-pos">${vocab.pos}</div>
-            <div class="vocab-definition">${vocab.definition}</div>
-            <div class="vocab-example">"${vocab.example}"</div>
-        `;
+        card.onkeydown = (e) => { if(e.key==='Enter'||e.key===' ') { e.preventDefault(); flipCard(card); } };
+        card.innerHTML = collapsedInner(vocab.word);
         container.appendChild(card);
     });
+    syncProgress();
 }
-
+function syncProgress(){
+  const bar = document.getElementById('progressBar');
+  const fill = document.getElementById('progressFill');
+  if(!fill) return;
+  const pct = vocabularyData.length ? Math.round((mastered / vocabularyData.length)*100) : 0;
+  fill.style.width = pct + '%';
+  if(bar) bar.setAttribute('aria-valuenow', String(pct));
+}
 function flipCard(card) {
-    card.classList.toggle('flipped');
-    if (!card.classList.contains('flipped')) {
-        card.innerHTML = vocabularyData[Array.from(card.parentElement.children).indexOf(card)].word;
-        card.innerHTML = `
-            <div class="vocab-word">${vocabularyData[Array.from(card.parentElement.children).indexOf(card)].word}</div>
-            <div class="vocab-pos">${vocabularyData[Array.from(card.parentElement.children).indexOf(card)].pos}</div>
-            <div class="vocab-definition">${vocabularyData[Array.from(card.parentElement.children).indexOf(card)].definition}</div>
-            <div class="vocab-example">"${vocabularyData[Array.from(card.parentElement.children).indexOf(card)].example}"</div>
-        `;
+    const idx = Array.from(card.parentElement.children).indexOf(card);
+    const vocab = vocabularyData[idx];
+    const isFlipped = card.classList.contains('flipped');
+    if (isFlipped) {
+        card.classList.remove('flipped');
+        card.innerHTML = collapsedInner(vocab.word);
     } else {
-        card.innerHTML = '<div class="vocab-word">Click to reveal</div>';
+        card.classList.add('flipped');
+        card.innerHTML = cardInner(vocab, 'Tap to hide');
     }
 }
 
@@ -189,10 +200,11 @@ function resetQuiz() {
 }
 
 function updateStats() {
-    document.getElementById('totalWords').textContent = vocabularyData.length;
-    document.getElementById('masteredCount').textContent = mastered;
-    document.getElementById('learningCount').textContent = vocabularyData.length - mastered;
-    document.getElementById('quizScore').textContent = quiz.correct;
+    const t = document.getElementById('totalWords'); if(t) t.textContent = vocabularyData.length;
+    const m = document.getElementById('masteredCount'); if(m) m.textContent = mastered;
+    const l = document.getElementById('learningCount'); if(l) l.textContent = Math.max(0, vocabularyData.length - mastered);
+    const q = document.getElementById('quizScore'); if(q) q.textContent = quiz.correct;
+    syncProgress();
 }
 
 function markMastered() {

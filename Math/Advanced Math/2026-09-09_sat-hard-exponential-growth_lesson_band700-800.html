@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SAT Math/Advanced Math · Exponential Growth/Decay · 700–800</title>
+<style>:root{--bg:#F4F5F8;--surface:#fff;--sunk:#E9ECF2;--ink:#16202E;--muted:#5C6A7D;--faint:#8E99A8;--accent:#33456B;--accent-soft:#E2E7F1;--rule:#D8DDE6}</style>
+<style id="ct-responsive-v2">@media(max-width:640px){body{padding:.5rem}}</style>
+</head>
+<body style="margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif;line-height:1.6">
+<div style="max-width:860px;margin:0 auto;padding:1.6rem 1.25rem 3rem">
+<span style="font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#33456B;background:#E2E7F1;padding:.3rem .6rem;border-radius:999px">SAT · 700–800</span>
+<h1 style="font-family:Georgia,serif">Exponential Growth/Decay</h1>
+<p style="color:var(--muted)">SAT Math/Advanced Math · 700–800 — supplementary mastery. Created 2026-09-09</p>
+<div style="background:#fff;border:1px solid var(--rule);border-radius:14px;padding:1.1rem 1.25rem;margin:.8rem 0">
+<p><b>Strategy 1 — Structure over brute force</b><br>Keep factored form — roots appear.</p>
+<p><b>Strategy 2 — Units & estimation</b><br>Write units, anchor with 10% before exact.</p>
+<p><b>Strategy 3 — Cross out & flag</b><br>If >45s, pick best, flag, return.</p>
+</div>
+<div style="background:#fff;border:1px solid var(--rule);border-radius:14px;padding:1.1rem 1.25rem;margin:.8rem 0">
+<span style="font-weight:800;background:#E9ECF2;border:1px solid var(--rule);padding:.4rem .7rem;border-radius:10px" id="timer">12:00</span> <button style="font-weight:700;background:#33456B;color:#fff;border:1px solid #33456B;padding:.5rem 1rem;border-radius:10px" id="startBtn">Start 12:00</button>
+<div style="margin-top:.8rem">
+<div style="border:1.5px solid var(--rule);border-radius:10px;padding:.6rem .9rem;margin:.45rem 0">1. Which completes precisely? <br>A trap <label><input type="radio" name="q1" value="A"> A</label> B trap <label><input type="radio" name="q1" value="B"> B</label> C correct <label><input type="radio" name="q1" value="C"> C</label> D inference <label><input type="radio" name="q1" value="D"> D</label></div>
+<div style="border:1.5px solid var(--rule);border-radius:10px;padding:.6rem .9rem;margin:.45rem 0">2. Function/grammar? <br>A trap B correct C error D guess (B)</div>
+<button style="font-weight:700;background:#33456B;color:#fff;border:1px solid #33456B;padding:.5rem 1rem;border-radius:10px" id="checkBtn">Check</button> <span id="score"></span>
+</div>
+</div>
+</div>
+<script>
+(function(){
+ var sec=12*60, iv=null, timer=document.getElementById('timer'), start=document.getElementById('startBtn');
+ function fmt(s){var m=Math.floor(s/60), r=s%60; return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0')}
+ if(timer) timer.textContent=fmt(sec);
+ if(start) start.addEventListener('click', function(){
+   if(iv) {clearInterval(iv); iv=null; start.textContent='Start 12:00'; return;}
+   sec=12*60; timer.textContent=fmt(sec); iv=setInterval(function(){sec--; timer.textContent=fmt(sec); if(sec<=0) clearInterval(iv)},1000); start.textContent='Pause';
+ });
+ document.getElementById('checkBtn')?.addEventListener('click', function(){document.getElementById('score').textContent='2 / 2 sample'});
+})();
+</script>
+</body>
+</html>

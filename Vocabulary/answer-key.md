@@ -277,3 +277,11 @@
 
 </body>
 </html>
+
+## 2026-09-09_sat-academic-tone_lesson_band700-800.html — Academic Tone — Shift (supplementary mastery)
+
+C // B balanced. Review reveal.
+
+## 2026-09-09_sat-error-audit_lesson_band700-800.html — Error Audit — Near-miss (supplementary mastery)
+
+C // B balanced. Review reveal.

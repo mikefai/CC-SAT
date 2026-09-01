@@ -270,3 +270,11 @@
 
 </body>
 </html>
+
+## 2026-09-09_sat-hard-counting_lesson_band700-800.html — Counting — Perm vs Comb (supplementary mastery)
+
+C // B balanced. Review reveal.
+
+## 2026-09-09_sat-hard-trig-app_lesson_band700-800.html — Trig Application — Word problems (supplementary mastery)
+
+C // B balanced. Review reveal.

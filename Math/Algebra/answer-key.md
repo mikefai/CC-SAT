@@ -24,3 +24,11 @@ Balance: 1×A,1×B,1×C,1×D per 4Q drill. Review reveal in lesson.
 
 Balance: 1×A,1×B,1×C,1×D per 4Q drill. Review reveal in lesson.
 
+
+## 2026-09-09_sat-hard-systems_lesson_band700-800.html — Hard Systems — Substitution trap (supplementary mastery)
+
+C // B balanced. Review reveal.
+
+## 2026-09-09_sat-hard-inequalities_lesson_band700-800.html —  Hard Inequalities — Sign flip (supplementary mastery)
+
+C // B balanced. Review reveal.

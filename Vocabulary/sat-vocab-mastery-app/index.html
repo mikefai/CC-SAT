@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>try{var t=localStorage.getItem('ct-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SAT Vocabulary Mastery — Interactive Flashcards & Quiz</title>
 <meta name="description" content="SAT Vocabulary Mastery — interactive flashcards and quiz for the 1200–1400 band. Offline, progress saved locally.">
 <meta name="theme-color" content="#3148c7">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="../../_Shared/css/dashboard.css">
 </head>
-<body>
+<body class="with-dash">
+<header class="dash-topbar" aria-label="Dashboard top bar">
+  <a class="dash-topbar__left" href="../../index.html" aria-label="Back to hub">
+    <span class="dash-topbar__mark" aria-hidden="true">CT</span>
+    <span>
+      <div class="dash-topbar__brand-title">CLAUDE TEACHING</div>
+      <div class="dash-topbar__brand-sub">Digital SAT · Dashboard</div>
+    </span>
+  </a>
+  <nav class="dash-topbar__center" aria-label="Primary"><a class="dash-tab" href="../../../IELTS Academic/dashboard/index.html">Dashboard</a><a class="dash-tab" href="../../index.html">Hub</a><a class="dash-tab" href="../../Reading and Writing/index.html">R&amp;W</a><a class="dash-tab" href="../../Math/index.html">Math</a></nav>
+  <span class="dash-target" aria-label="Target Score" style="background:#ede9fe;color:#5b3bb8;border-color:#ddd6fe">Target: 1400</span>
+</header>
+
   <div class="container">
     <header>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:.6rem">

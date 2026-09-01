@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+<script>try{var t=localStorage.getItem('ct-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Answer Key — Four-Domain Starter Set</title>
@@ -65,8 +66,21 @@
   @media print{body{background:#fff;color:#000;font-size:10pt}.hero{padding:0.5rem 0 1rem}.rat{break-inside:avoid}.count,.strat{background:none}}
 </style>
 <link rel="stylesheet" href="../../_Shared/css/lesson.css">
+<link rel="stylesheet" href="../../_Shared/css/dashboard.css">
 </head>
-<body>
+<body class="with-dash">
+<header class="dash-topbar" aria-label="Dashboard top bar">
+  <a class="dash-topbar__left" href="../../index.html" aria-label="Back to hub">
+    <span class="dash-topbar__mark" aria-hidden="true">CT</span>
+    <span>
+      <div class="dash-topbar__brand-title">CLAUDE TEACHING</div>
+      <div class="dash-topbar__brand-sub">Digital SAT · Dashboard</div>
+    </span>
+  </a>
+  <nav class="dash-topbar__center" aria-label="Primary"><a class="dash-tab" href="../../../IELTS Academic/dashboard/index.html">Dashboard</a><a class="dash-tab" href="../../index.html">Hub</a><a class="dash-tab" href="../index.html">R&amp;W</a><a class="dash-tab" href="../../Math/index.html">Math</a></nav>
+  <span class="dash-target" aria-label="Target Score" style="background:#ede9fe;color:#5b3bb8;border-color:#ddd6fe">Target: 1400</span>
+</header>
+
 
 <div class="hero">
   <div class="wrap">

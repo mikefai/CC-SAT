@@ -90,11 +90,12 @@ function initializeApp() {
     updateStats();
 }
 
+function esc(s){ var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 function cardInner(vocab, hint){
-  return `<span class="hint">${hint}</span><div class="vocab-word">${vocab.word}</div><div class="vocab-pos">${vocab.pos}</div><div class="vocab-definition">${vocab.definition}</div><div class="vocab-example">"${vocab.example}"</div>`;
+  return `<span class="hint">${esc(hint)}</span><div class="vocab-word">${esc(vocab.word)}</div><div class="vocab-pos">${esc(vocab.pos)}</div><div class="vocab-definition">${esc(vocab.definition)}</div><div class="vocab-example">"${esc(vocab.example)}"</div>`;
 }
 function collapsedInner(word){
-  return `<span class="hint">Tap to reveal</span><div class="vocab-word">${word}</div><div class="vocab-pos" style="opacity:.6">tap to flip</div>`;
+  return `<span class="hint">Tap to reveal</span><div class="vocab-word">${esc(word)}</div><div class="vocab-pos" style="opacity:.6">tap to flip</div>`;
 }
 function loadFlashcards() {
     const container = document.getElementById('cardContainer');
@@ -122,7 +123,9 @@ function syncProgress(){
   if(bar) bar.setAttribute('aria-valuenow', String(pct));
 }
 function flipCard(card) {
+    if(!card || !card.parentElement) return;
     const idx = Array.from(card.parentElement.children).indexOf(card);
+    if(idx < 0 || idx >= vocabularyData.length) return;
     const vocab = vocabularyData[idx];
     const isFlipped = card.classList.contains('flipped');
     if (isFlipped) {
@@ -160,19 +163,26 @@ function loadQuestion() {
     });
 }
 
+let _quizTimer=null;
 function selectAnswer(selected, correct) {
+    if(selected < 0 || correct < 0) return;
+    const opts=document.querySelectorAll('.option');
+    if(selected >= opts.length || correct >= opts.length) return;
+    // prevent double-click
+    opts.forEach(o=>o.style.pointerEvents='none');
     quiz.answered++;
     if (selected === correct) {
         quiz.correct++;
-        document.querySelectorAll('.option')[selected].classList.add('correct');
+        opts[selected].classList.add('correct');
         showFeedback('Correct!', 'success');
     } else {
-        document.querySelectorAll('.option')[selected].classList.add('incorrect');
-        document.querySelectorAll('.option')[correct].classList.add('correct');
+        opts[selected].classList.add('incorrect');
+        opts[correct].classList.add('correct');
         showFeedback('Incorrect. The correct answer is highlighted.', 'error');
     }
-
-    setTimeout(() => {
+    updateStats();
+    clearTimeout(_quizTimer);
+    _quizTimer=setTimeout(() => {
         loadQuestion();
     }, 1500);
 }
@@ -184,18 +194,27 @@ function showFeedback(message, type) {
 }
 
 function showResults() {
-    const percentage = Math.round((quiz.correct / quizQuestions.length) * 100);
-    document.getElementById('quizSection').innerHTML = `
+    const sec=document.getElementById('quizSection');
+    if(!sec) return;
+    const percentage = quizQuestions.length ? Math.round((quiz.correct / quizQuestions.length) * 100) : 0;
+    sec.innerHTML = `
         <h2>Quiz Complete!</h2>
-        <p>Score: ${quiz.correct} / ${quizQuestions.length} (${percentage}%)</p>
-        <button onclick="resetQuiz()">Take Quiz Again</button>
-        <button class="secondary" onclick="location.reload()">Back to Flashcards</button>
+        <p>Score: ${esc(String(quiz.correct))} / ${esc(String(quizQuestions.length))} (${esc(String(percentage))}%)</p>
+        <div style="display:flex;gap:.6rem;margin-top:.8rem"><button type="button" id="btnRetake">Take Quiz Again</button><button type="button" class="secondary" id="btnBack">Back to Flashcards</button></div>
     `;
+    const b1=document.getElementById('btnRetake');
+    const b2=document.getElementById('btnBack');
+    if(b1) b1.addEventListener('click', resetQuiz);
+    if(b2) b2.addEventListener('click', ()=>{ quiz={answered:0,correct:0}; sec.classList.add('hidden'); loadFlashcards(); updateStats(); });
 }
 
 function resetQuiz() {
     quiz = { answered: 0, correct: 0 };
-    document.getElementById('quizFeedback').innerHTML = '';
+    const fb=document.getElementById('quizFeedback');
+    if(fb) fb.textContent='';
+    const sec=document.getElementById('quizSection');
+    if(sec){ sec.classList.remove('hidden'); }
+    updateStats();
     loadQuestion();
 }
 
@@ -208,6 +227,7 @@ function updateStats() {
 }
 
 function markMastered() {
+    if(mastered >= vocabularyData.length) return;
     mastered++;
     updateStats();
     showMessage('Added to mastered words!');

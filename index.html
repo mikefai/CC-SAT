@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Digital SAT — Materials Hub</title>
-<meta name="description" content="Digital SAT — Materials Hub — CLAUDE TEACHING. Self-contained, offline, light-theme lesson hub.">
-<meta name="theme-color" content="#3148c7">
+<title>Digital SAT — Materials Hub · Examination Atelier</title>
+<meta name="description" content="Digital SAT — Materials Hub — CLAUDE TEACHING Examination Atelier. College Board adaptive test prep, offline, with band tape and examiner notes.">
+<meta name="theme-color" content="#0f141c">
 <link rel="stylesheet" href="_Shared/css/design-system.css">
 </head>
 <body>
+<div id="progress" class="progress" aria-hidden="true"></div>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="topbar">
   <div class="wrap topbar__inner">
@@ -16,29 +17,52 @@
       <span class="topbar__mark">CT</span>
       <span>
         <span class="topbar__title">CLAUDE TEACHING</span>
-        <span class="topbar__sub">SAT &amp; IELTS · OFFLINE READY</span>
+        <span class="topbar__sub">Examination Atelier · Offline</span>
       </span>
     </a>
     <div class="topbar__right">
       <a class="topbar__crumb" href="../IELTS Academic/index.html">IELTS Academic →</a>
       <span class="pill">Digital SAT</span>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme"><span class="theme-icon" aria-hidden="true">☀</span><span class="theme-label visually-hidden">Dark</span></button>
     </div>
   </div>
 </header>
 
 <main id="main" class="wrap">
   <section class="hero">
-    <span class="eyebrow">College Board · Digital Adaptive Test</span>
-    <h1 class="hero__title">Digital SAT</h1>
-    <p class="lede">Every practice set and app, organized by subsection. Difficulty targets use SAT scale bands — filter instantly, everything works offline.</p>
+    <span class="eyebrow">College Board · Digital Adaptive · Timed</span>
+    <h1 class="hero__title">Digital SAT — <em>choose your module</em></h1>
+    <p class="lede">Every practice set and app, organized the way the test is built. Band tape below is the examiner’s ruler — filter to your target, everything works offline.</p>
     <div class="hero__meta">
       <span class="chip"><b>4</b> sections</span>
       <span class="chip"><b>9</b> materials</span>
-      <span class="chip">Offline · Light theme · Answer keys separate</span>
+      <span class="chip">40-minute modules · Answer keys separate</span>
     </div>
   </section>
 
-  <div class="toolbar">
+  <div class="band-tape" aria-hidden="true">
+    <div class="band-tape__track">
+      <span class="band-tape__item"><span class="band-tape__dot"></span><b>Reading & Writing</b> 550—650</span>
+      <span class="band-tape__item"><span class="band-tape__dot"></span><b>Math</b> 550—650</span>
+      <span class="band-tape__item band-tape__item--accent"><b>Vocabulary</b> Top 100</span>
+      <span class="band-tape__item"><span class="band-tape__dot"></span><b>Mock</b> Modular 550—650</span>
+      <span class="band-tape__item"><b>Reading & Writing</b> Mixed Domains</span>
+      <span class="band-tape__item"><b>Math</b> Algebra · Advanced</span>
+      <span class="band-tape__item"><b>Vocabulary</b> In Context 1200—1400</span>
+      <span class="band-tape__item"><b>Mock</b> Full Adaptive</span>
+      <!-- duplicate for seamless loop -->
+      <span class="band-tape__item"><span class="band-tape__dot"></span><b>Reading & Writing</b> 550—650</span>
+      <span class="band-tape__item"><span class="band-tape__dot"></span><b>Math</b> 550—650</span>
+      <span class="band-tape__item band-tape__item--accent"><b>Vocabulary</b> Top 100</span>
+      <span class="band-tape__item"><span class="band-tape__dot"></span><b>Mock</b> Modular 550—650</span>
+      <span class="band-tape__item"><b>Reading & Writing</b> Mixed Domains</span>
+      <span class="band-tape__item"><b>Math</b> Algebra · Advanced</span>
+      <span class="band-tape__item"><b>Vocabulary</b> In Context 1200—1400</span>
+      <span class="band-tape__item"><b>Mock</b> Full Adaptive</span>
+    </div>
+  </div>
+
+  <div class="toolbar reveal">
     <label class="search" aria-label="Filter sections">
       <svg class="search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" type="search" placeholder="Filter sections… try ‘math’ or ‘vocab’" autocomplete="off">
@@ -51,16 +75,16 @@
     </div>
   </div>
 
-  <nav class="grid grid--cards" id="cards" aria-label="SAT sections">
+  <nav class="grid grid--cards reveal" id="cards" aria-label="SAT sections">
     <a class="card card--accent" data-k="reading writing passages grammar" href="Reading%20and%20Writing/index.html">
       <span class="card__kicker">Section · Digital SAT</span>
       <div class="card__head">
-        <span class="card__icon" aria-hidden="true">◐</span>
+        <span class="card__icon" aria-hidden="true">Aa</span>
         <span class="card__title">Reading and Writing</span>
         <span class="card__count">4</span>
       </div>
       <p class="card__desc">Mixed-domain & 550–650 practice with separate KEY variants. Grammar & vocab sets incoming.</p>
-      <span class="card__go">Browse materials →</span>
+      <span class="card__go">Browse materials</span>
     </a>
     <a class="card card--violet" data-k="math algebra problem solving" href="Math/index.html">
       <span class="card__kicker">Section · Quantitative</span>
@@ -70,7 +94,7 @@
         <span class="card__count">1</span>
       </div>
       <p class="card__desc">Problem Solving module-1 at 550–650. Algebra & Advanced Math practice to come.</p>
-      <span class="card__go">Browse materials →</span>
+      <span class="card__go">Browse materials</span>
     </a>
     <a class="card card--teal" data-k="vocabulary flashcards app vocab" href="Vocabulary/index.html">
       <span class="card__kicker">Section · Vocabulary</span>
@@ -80,7 +104,7 @@
         <span class="card__count">3</span>
       </div>
       <p class="card__desc">Top-100 flashcards, vocabulary-in-context practice, and the Vocab Mastery interactive app.</p>
-      <span class="card__go">Browse materials →</span>
+      <span class="card__go">Browse materials</span>
     </a>
     <a class="card" data-k="mock tests modular exam" href="Mock%20Tests/index.html">
       <span class="card__kicker">Section · Timed</span>
@@ -90,19 +114,19 @@
         <span class="card__count">1</span>
       </div>
       <p class="card__desc">Full modular mock at 550–650 with answer key — simulate the adaptive test.</p>
-      <span class="card__go">Browse materials →</span>
+      <span class="card__go">Browse materials</span>
     </a>
   </nav>
 
-  <div id="empty" class="empty" style="display:none; margin-top:1rem;">No sections match your filter. Try another keyword — e.g. “math”.</div>
+  <div id="empty" class="empty" style="display:none; margin-top:1rem;">No sections match your filter. Try “math”.</div>
 
-  <div class="callout" style="margin-top:1.6rem">
-    <div class="callout__label">How difficulty is labeled</div>
-    <p class="small" style="margin:0">SAT bands (550–650, 1200–1400) mirror the College Board scale. “KEY” files are never inline — open separately to avoid spoilers. Max 3–4 strategies per lesson, light theme, fully offline.</p>
+  <div class="callout reveal" style="margin-top:1.6rem">
+    <div class="callout__label">Examiner’s note — how difficulty is labeled</div>
+    <p class="small" style="margin:0">SAT bands (550–650, 1200–1400) mirror the College Board scale. “KEY” files are never inline — open separately to avoid spoilers. Max 3–4 strategies per lesson. Fully offline, examiner’s red pen on paper.</p>
   </div>
 
-  <footer class="foot">
-    <p>CLAUDE TEACHING — Digital SAT hub · <a href="../IELTS Academic/index.html">Switch to IELTS Academic</a> · Conventions: <a href="CLAUDE.md">CLAUDE.md</a></p>
+  <footer class="foot reveal">
+    <p>CLAUDE TEACHING — Digital SAT atelier · <a href="../IELTS Academic/index.html">Switch to IELTS Academic</a> · Conventions: <a href="CLAUDE.md">CLAUDE.md</a> · <span class="muted">Light / Dark — lamp in topbar</span></p>
   </footer>
 </main>
 
